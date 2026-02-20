@@ -65,7 +65,6 @@ var (
 	testEnv    *envtest.Environment
 	testScheme *runtime.Scheme = scheme.Scheme
 	ctx        context.Context
-	cancel     context.CancelFunc
 	restCfg    *rest.Config
 	logger     = logf.Log.WithName("unit-tests")
 
@@ -158,7 +157,7 @@ func (m *mockAutoDetect) OpAmpBridgeAvailablity() (opampbridge.Availability, err
 
 func TestMain(m *testing.M) {
 	var err error
-	ctx, cancel = context.WithCancel(context.TODO())
+	ctx, cancel := context.WithCancel(context.TODO())
 	defer cancel()
 
 	// logging is useful for these tests
@@ -258,8 +257,11 @@ func TestMain(m *testing.M) {
 		}, func(error) bool {
 			return true
 		}, func() error {
-			// #nosec G402
-			conn, tlsErr := tls.DialWithDialer(dialer, "tcp", addrPort, &tls.Config{InsecureSkipVerify: true})
+			tlsDialer := &tls.Dialer{
+				NetDialer: dialer,
+				Config:    &tls.Config{InsecureSkipVerify: true},
+			}
+			conn, tlsErr := tlsDialer.DialContext(ctx, "tcp", addrPort)
 			if tlsErr != nil {
 				return tlsErr
 			}

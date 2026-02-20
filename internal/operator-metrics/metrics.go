@@ -72,8 +72,8 @@ func (om operatorMetrics) NeedLeaderElection() bool {
 	return true
 }
 
-func (om operatorMetrics) caConfigMapExists() bool {
-	return om.kubeClient.Get(context.Background(), client.ObjectKey{
+func (om operatorMetrics) caConfigMapExists(ctx context.Context) bool {
+	return om.kubeClient.Get(ctx, client.ObjectKey{
 		Name:      caBundleConfigMap,
 		Namespace: openshiftInClusterMonitoringNamespace,
 	}, &corev1.ConfigMap{},
@@ -125,7 +125,7 @@ func (om operatorMetrics) createOperatorMetricsServiceMonitor(ctx context.Contex
 
 	var tlsConfig *monitoringv1.TLSConfig
 
-	if om.caConfigMapExists() {
+	if om.caConfigMapExists(ctx) {
 		serviceName := fmt.Sprintf("opentelemetry-operator-controller-manager-metrics-service.%s.svc", namespace)
 
 		tlsConfig = &monitoringv1.TLSConfig{

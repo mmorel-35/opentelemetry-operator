@@ -1,7 +1,7 @@
 version: "2"
 run:
   concurrency: 3
-  timeout: 5m
+  timeout: 0
   issues-exit-code: 1
   tests: true
 
@@ -54,16 +54,19 @@ linters:
         - -ST1019 # FIXME Importing the same package multiple times
         - -ST1023 # FIXME Redundant type in variable declaration
   enable:
+    - contextcheck
     - depguard
     - errcheck
     - errorlint
     - exhaustive
+    - fatcontext
     - godot
     - goheader
     - gosec
     - govet
     - ineffassign
     - misspell
+    - noctx
     - staticcheck
     - unparam
     - unused

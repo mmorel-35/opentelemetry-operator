@@ -371,9 +371,7 @@ func (r *ClusterObservabilityReconciler) SetupCaches(mgr ctrl.Manager) error {
 }
 
 // findClusterObservabilityForNamespace finds ClusterObservability instances when namespaces change.
-func (r *ClusterObservabilityReconciler) findClusterObservabilityForNamespace(_ context.Context, obj client.Object) []ctrl.Request {
-	ctx := context.Background()
-
+func (r *ClusterObservabilityReconciler) findClusterObservabilityForNamespace(ctx context.Context, obj client.Object) []ctrl.Request {
 	var clusterObservabilityList v1alpha1.ClusterObservabilityList
 	if err := r.List(ctx, &clusterObservabilityList); err != nil {
 		r.log.Error(err, "failed to list ClusterObservability resources")

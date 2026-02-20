@@ -4,6 +4,7 @@
 package collector
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -72,7 +73,7 @@ func Build(params manifests.Params) ([]client.Object, error) {
 	}
 
 	if needsCheckSaPermissions(params) {
-		warnings, err := CheckRbacRules(params, params.OtelCol.Spec.ServiceAccount)
+		warnings, err := CheckRbacRules(context.Background(), params, params.OtelCol.Spec.ServiceAccount)
 		if err != nil {
 			return nil, fmt.Errorf("error checking RBAC rules for serviceAccount %s: %w", params.OtelCol.Spec.ServiceAccount, err)
 		}

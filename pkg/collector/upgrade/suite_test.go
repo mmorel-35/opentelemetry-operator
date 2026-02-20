@@ -38,14 +38,12 @@ var (
 	k8sClient  client.Client
 	testEnv    *envtest.Environment
 	testScheme *runtime.Scheme = scheme.Scheme
-	ctx        context.Context
-	cancel     context.CancelFunc
 	err        error
 	cfg        *rest.Config
 )
 
 func TestMain(m *testing.M) {
-	ctx, cancel = context.WithCancel(context.TODO())
+	ctx, cancel := context.WithCancel(context.TODO())
 	defer cancel()
 	utilruntime.Must(v1alpha1.AddToScheme(testScheme))
 	utilruntime.Must(v1beta1.AddToScheme(testScheme))
@@ -125,8 +123,11 @@ func TestMain(m *testing.M) {
 		}, func(error) bool {
 			return true
 		}, func() error {
-			// #nosec G402
-			conn, tlsErr := tls.DialWithDialer(dialer, "tcp", addrPort, &tls.Config{InsecureSkipVerify: true})
+			tlsDialer := &tls.Dialer{
+				NetDialer: dialer,
+				Config:    &tls.Config{InsecureSkipVerify: true},
+			}
+			conn, tlsErr := tlsDialer.DialContext(ctx, "tcp", addrPort)
 			if tlsErr != nil {
 				return tlsErr
 			}

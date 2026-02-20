@@ -79,9 +79,7 @@ func ClusterRoleBinding(params manifests.Params) (*rbacv1.ClusterRoleBinding, er
 	}, nil
 }
 
-func CheckRbacRules(params manifests.Params, saName string) ([]string, error) {
-	ctx := context.Background()
-
+func CheckRbacRules(ctx context.Context, params manifests.Params, saName string) ([]string, error) {
 	rules, err := params.OtelCol.Spec.Config.GetAllRbacRules(params.Log)
 	if err != nil {
 		return nil, err
