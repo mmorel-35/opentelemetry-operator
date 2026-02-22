@@ -58,6 +58,8 @@ linters:
         - -ST1005 # FIXME Incorrectly formatted error string
         - -ST1012 # FIXME Poorly chosen name for error variable
         - -ST1016 # FIXME Use consistent method receiver names
+    usetesting:
+      os-temp-dir: true
   enable:
     - depguard
     - errcheck
@@ -76,6 +78,7 @@ linters:
     - staticcheck
     - unparam
     - unused
+    - usetesting
   exclusions:
     generated: lax
     presets:

@@ -35,7 +35,7 @@ func TestNewOperatorMetrics(t *testing.T) {
 }
 
 func TestOperatorMetrics_Start(t *testing.T) {
-	tmpFile, err := os.CreateTemp("", "namespace")
+	tmpFile, err := os.CreateTemp(t.TempDir(), "namespace")
 	require.NoError(t, err)
 	defer os.Remove(tmpFile.Name())
 
