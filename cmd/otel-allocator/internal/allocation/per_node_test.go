@@ -75,14 +75,14 @@ func TestAllocationPerNode(t *testing.T) {
 	for _, item := range targetList {
 		actualItem, found := actualItems[item.Hash()]
 		// if third target, should be skipped
-		assert.True(t, found, "target with hash %s not found", item.Hash())
+		assert.Truef(t, found, "target with hash %s not found", item.Hash())
 
 		// only the first two targets should be allocated
 		itemsForCollector := s.GetTargetsForCollectorAndJob(actualItem.CollectorName, actualItem.JobName)
 
 		// first two should be assigned one to each collector; if third target, should not be assigned
 		if item.Hash() == thirdTarget.Hash() {
-			assert.Len(t, itemsForCollector, 0)
+			assert.Empty(t, itemsForCollector)
 			continue
 		}
 		assert.Len(t, itemsForCollector, 1)
@@ -140,7 +140,7 @@ func TestAllocationPerNodeUsingFallback(t *testing.T) {
 	for _, item := range targetList {
 		actualItem, found := actualItems[item.Hash()]
 
-		assert.True(t, found, "target with hash %s not found", item.Hash())
+		assert.Truef(t, found, "target with hash %s not found", item.Hash())
 
 		itemsForCollector := s.GetTargetsForCollectorAndJob(actualItem.CollectorName, actualItem.JobName)
 
@@ -149,7 +149,7 @@ func TestAllocationPerNodeUsingFallback(t *testing.T) {
 		// one of the others, depending on the strategy and collector loop order
 		if item.Hash() == thirdTarget.Hash() {
 			assert.Empty(t, item.GetNodeName())
-			assert.NotZero(t, len(itemsForCollector))
+			assert.NotEmpty(t, itemsForCollector)
 			continue
 		}
 

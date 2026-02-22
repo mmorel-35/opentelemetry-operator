@@ -198,7 +198,7 @@ func TestLeastWeightedJobDistribution(t *testing.T) {
 		// Each collector should have close to expectedPerJobPerCollector targets from this job
 		// Allow 10% variance to account for target processing order
 		for colName, count := range perCollector {
-			assert.InDelta(t, expectedPerJobPerCollector, count, expectedPerJobPerCollector*0.1,
+			assert.InDeltaf(t, expectedPerJobPerCollector, count, expectedPerJobPerCollector*0.1,
 				"collector %s should have ~%.0f targets from job %s, got %d",
 				colName, expectedPerJobPerCollector, job, count)
 		}

@@ -7,7 +7,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -134,7 +133,7 @@ func TestOTELCollectorCRDMetrics(t *testing.T) {
 	provider := metric.NewMeterProvider(metric.WithReader(reader))
 	cl := fake.NewClientBuilder().WithScheme(scheme).Build()
 	crdMetrics, err := NewMetrics(provider, context.Background(), cl)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -208,16 +207,16 @@ func TestOTELCollectorInitMetrics(t *testing.T) {
 	list := &OpenTelemetryCollectorList{
 		Items: []OpenTelemetryCollector{otelcollector1, otelcollector2},
 	}
-	require.NoError(t, err, "Should be able to add custom types")
+	require.NoErrorf(t, err, "Should be able to add custom types")
 	cl := fake.NewClientBuilder().WithLists(list).WithScheme(scheme).Build()
 	reader := metric.NewManualReader()
 	provider := metric.NewMeterProvider(metric.WithReader(reader))
 	_, err = NewMetrics(provider, context.Background(), cl)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	rm := metricdata.ResourceMetrics{}
 	err = reader.Collect(context.Background(), &rm)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.Len(t, rm.ScopeMetrics, 1)
 
 	want := metricdata.ScopeMetrics{
@@ -340,7 +339,7 @@ func checkCreate(t *testing.T, m *Metrics, collectors []*OpenTelemetryCollector,
 	m.create(context.Background(), collectors[0])
 	rm := metricdata.ResourceMetrics{}
 	err := reader.Collect(context.Background(), &rm)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	want := metricdata.ScopeMetrics{
 		Scope: wantInstrumentationScope,
@@ -410,7 +409,7 @@ func checkCreate(t *testing.T, m *Metrics, collectors []*OpenTelemetryCollector,
 
 	rm = metricdata.ResourceMetrics{}
 	err = reader.Collect(context.Background(), &rm)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.Len(t, rm.ScopeMetrics, 1)
 
 	want = metricdata.ScopeMetrics{
@@ -532,7 +531,7 @@ func checkUpdate(t *testing.T, m *Metrics, collectors []*OpenTelemetryCollector,
 
 	rm := metricdata.ResourceMetrics{}
 	err := reader.Collect(context.Background(), &rm)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.Len(t, rm.ScopeMetrics, 1)
 
 	want := metricdata.ScopeMetrics{
@@ -683,7 +682,7 @@ func checkDelete(t *testing.T, m *Metrics, collectors []*OpenTelemetryCollector,
 	m.delete(context.Background(), collectors[1])
 	rm := metricdata.ResourceMetrics{}
 	err := reader.Collect(context.Background(), &rm)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.Len(t, rm.ScopeMetrics, 1)
 	want := metricdata.ScopeMetrics{
 		Scope: wantInstrumentationScope,

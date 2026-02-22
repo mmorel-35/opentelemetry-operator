@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -277,7 +278,7 @@ func TestBuilder_Build(t *testing.T) {
 			}
 			assert.Equalf(t, tt.want.name, got.ParserName(), "ParserName()")
 			ports, err := got.Ports(logr.Discard(), got.ParserType(), tt.params.conf)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equalf(t, tt.want.ports, ports, "Ports()")
 			rules, rbacErr := got.GetRBACRules(logr.Discard(), tt.params.conf)
 			if tt.wantRbacErr(t, rbacErr, "WantRbacErr()") && rbacErr != nil {
@@ -290,7 +291,7 @@ func TestBuilder_Build(t *testing.T) {
 			}
 			assert.Equalf(t, tt.want.livenessProbe, livenessProbe, "GetLivenessProbe()")
 			readinessProbe, readinessErr := got.GetReadinessProbe(logr.Discard(), tt.params.conf)
-			assert.NoError(t, readinessErr)
+			require.NoError(t, readinessErr)
 			assert.Equalf(t, tt.want.readinessProbe, readinessProbe, "GetReadinessProbe()")
 		})
 	}

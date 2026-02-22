@@ -126,15 +126,15 @@ func TestShouldUpgradeAllToLatestBasedOnUpgradeStrategy(t *testing.T) {
 
 			// test
 			err = up.Upgrade(context.Background(), *persisted)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			// verify
 			err = k8sClient.Get(context.Background(), nsn, persisted)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, upgrade.Latest.String(), persisted.Status.Version)
 
 			// cleanup
-			assert.NoError(t, k8sClient.Delete(context.Background(), &existing))
+			require.NoError(t, k8sClient.Delete(context.Background(), &existing))
 		})
 	}
 }
@@ -206,16 +206,16 @@ func TestEnvVarUpdates(t *testing.T) {
 
 	// test
 	err = up.Upgrade(context.Background(), *persisted)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// verify
 	err = k8sClient.Get(context.Background(), nsn, persisted)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, upgrade.Latest.String(), persisted.Status.Version)
 	assert.NotContainsf(t, persisted.Spec.Args["feature-gates"], "-confmap.unifyEnvVarExpansion", "still has env var")
 
 	// cleanup
-	assert.NoError(t, k8sClient.Delete(context.Background(), &collectorInstance))
+	require.NoError(t, k8sClient.Delete(context.Background(), &collectorInstance))
 }
 
 func TestUpgradeUpToLatestKnownVersion(t *testing.T) {
@@ -245,7 +245,7 @@ func TestUpgradeUpToLatestKnownVersion(t *testing.T) {
 			res, err := up.ManagedInstance(context.Background(), convertTov1beta1(t, existing))
 
 			// verify
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.expectedV, res.Status.Version)
 		})
 	}
@@ -284,9 +284,9 @@ func TestVersionsShouldNotBeChanged(t *testing.T) {
 			// test
 			res, err := up.ManagedInstance(context.Background(), convertTov1beta1(t, existing))
 			if tt.failureExpected {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			// verify

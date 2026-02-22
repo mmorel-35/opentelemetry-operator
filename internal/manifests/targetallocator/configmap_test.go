@@ -194,7 +194,7 @@ prometheus_cr:
 			TargetAllocator: targetAllocator,
 		}
 		actual, err := ConfigMap(testParams)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "my-instance-targetallocator", actual.Name)
 		assert.Equal(t, expectedLabels, actual.Labels)
 		assert.Equal(t, expectedData, actual.Data)
@@ -237,7 +237,7 @@ prometheus_cr:
 			TargetAllocator: targetAllocator,
 		}
 		actual, err := ConfigMap(testParams)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, "my-instance-targetallocator", actual.Name)
 		assert.Equal(t, expectedLabels, actual.Labels)
@@ -300,7 +300,7 @@ prometheus_cr:
 			TargetAllocator: targetAllocator,
 		}
 		actual, err := ConfigMap(testParams)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, "my-instance-targetallocator", actual.Name)
 		assert.Equal(t, expectedLabels, actual.Labels)
@@ -353,7 +353,7 @@ https:
 		}
 
 		actual, err := ConfigMap(testParams)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, "my-instance-targetallocator", actual.Name)
 		assert.Equal(t, expectedLabels, actual.Labels)
@@ -407,7 +407,7 @@ https:
 		}
 
 		actual, err := ConfigMap(testParams)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, "my-instance-targetallocator", actual.Name)
 		assert.Equal(t, expectedLabels, actual.Labels)

@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
@@ -122,7 +123,7 @@ func TestPDBWithValidStrategy(t *testing.T) {
 				})
 
 				// verify
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, "my-instance-targetallocator", pdb.Name)
 				assert.Equal(t, "my-instance-targetallocator", pdb.Labels["app.kubernetes.io/name"])
 				assert.Equal(t, test.expected.MinAvailable, pdb.Spec.MinAvailable)
@@ -155,10 +156,10 @@ func TestPDBWithNotValidStrategy(t *testing.T) {
 
 			// verify that we error if the spec is set here
 			if test.spec.DeepCopy() != nil {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
 				// Should be no error if no one is attempting to set a PDB here
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 			assert.Nil(t, pdb)
 		})
@@ -179,6 +180,6 @@ func TestNoPDB(t *testing.T) {
 	})
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Nil(t, pdb)
 }

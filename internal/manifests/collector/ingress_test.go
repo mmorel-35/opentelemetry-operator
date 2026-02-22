@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	networkingv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -36,7 +37,7 @@ func TestDesiredIngresses(t *testing.T) {
 
 		actual, err := Ingress(params)
 		assert.Nil(t, actual)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("should return nil, no ingress set", func(t *testing.T) {
@@ -52,7 +53,7 @@ func TestDesiredIngresses(t *testing.T) {
 
 		actual, err := Ingress(params)
 		assert.Nil(t, actual)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("should return nil unable to parse receiver ports", func(t *testing.T) {
@@ -71,7 +72,7 @@ func TestDesiredIngresses(t *testing.T) {
 
 		actual, err := Ingress(params)
 		assert.Nil(t, actual)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("path per port", func(t *testing.T) {
@@ -95,7 +96,7 @@ func TestDesiredIngresses(t *testing.T) {
 		}
 
 		got, err := Ingress(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		pathType := networkingv1.PathTypePrefix
 
@@ -187,7 +188,7 @@ func TestDesiredIngresses(t *testing.T) {
 		}
 
 		got, err := Ingress(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		pathType := networkingv1.PathTypePrefix
 

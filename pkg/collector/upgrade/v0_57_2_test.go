@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/record"
 
@@ -61,7 +62,7 @@ service:
 	}
 
 	upgradedInstanceV1beta1, err := versionUpgrade.ManagedInstance(context.Background(), convertTov1beta1(t, collectorInstance))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	upgradedInstance := convertTov1alpha1(t, upgradedInstanceV1beta1)
 	assert.YAMLEq(t, `extensions:
   health_check:

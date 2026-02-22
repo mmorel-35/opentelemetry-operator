@@ -76,25 +76,25 @@ func TestNewObjectsOnReconciliation_TargetAllocator(t *testing.T) {
 	{
 		list := &corev1.ConfigMapList{}
 		err = k8sClient.List(context.Background(), list, opts...)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, list.Items)
 	}
 	{
 		list := &corev1.ServiceAccountList{}
 		err = k8sClient.List(context.Background(), list, opts...)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, list.Items)
 	}
 	{
 		list := &corev1.ServiceList{}
 		err = k8sClient.List(context.Background(), list, opts...)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, list.Items)
 	}
 	{
 		list := &appsv1.DeploymentList{}
 		err = k8sClient.List(context.Background(), list, opts...)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, list.Items)
 	}
 
@@ -134,7 +134,7 @@ func TestSkipWhenInstanceDoesNotExist_TargetAllocator(t *testing.T) {
 	// verify that no objects have been created
 	var objList appsv1.DeploymentList
 	err = k8sClient.List(context.Background(), &objList, opts...)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Empty(t, objList.Items)
 }
 
@@ -187,7 +187,7 @@ func TestUnmanaged_TargetAllocator(t *testing.T) {
 	// verify that no objects have been created
 	var objList appsv1.DeploymentList
 	err = k8sClient.List(context.Background(), &objList, opts...)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Empty(t, objList.Items)
 
 	// cleanup
@@ -244,7 +244,7 @@ func TestBuildError_TargetAllocator(t *testing.T) {
 	// verify that no objects have been created
 	var objList appsv1.DeploymentList
 	err = k8sClient.List(context.Background(), &objList, opts...)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Empty(t, objList.Items)
 
 	// cleanup

@@ -1,10 +1,17 @@
 version: "2"
 run:
   concurrency: 3
-  timeout: 5m
   issues-exit-code: 1
   tests: true
-
+issues:
+  # Maximum issues count per one linter.
+  # Set to 0 to disable.
+  # Default: 50
+  max-issues-per-linter: 0
+  # Maximum count of issues with the same text.
+  # Set to 0 to disable.
+  # Default: 3
+  max-same-issues: 0
 linters:
   # all available settings of specific linters
   settings:
@@ -58,6 +65,14 @@ linters:
         - -ST1005 # FIXME Incorrectly formatted error string
         - -ST1012 # FIXME Poorly chosen name for error variable
         - -ST1016 # FIXME Use consistent method receiver names
+    testifylint:
+      disable:
+        - go-require
+      enable-all: true
+      formatter:
+        require-f-funcs: true
+      go-require:
+        ignore-http-handlers: true
   enable:
     - depguard
     - errcheck
@@ -74,6 +89,7 @@ linters:
     - noctx
     - nolintlint
     - staticcheck
+    - testifylint
     - unparam
     - unused
   exclusions:

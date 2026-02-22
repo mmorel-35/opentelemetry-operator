@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -153,7 +154,7 @@ func TestDesiredService(t *testing.T) {
 
 		actual, err := Service(params)
 		assert.Nil(t, actual)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 	t.Run("should return service with port mentioned in OtelCol.Spec.Ports and inferred ports", func(t *testing.T) {
 
@@ -170,7 +171,7 @@ func TestDesiredService(t *testing.T) {
 		expected := service("test-collector", ports)
 
 		actual, err := Service(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expected, *actual)
 
 	})
@@ -192,7 +193,7 @@ func TestDesiredService(t *testing.T) {
 
 		ports := append(params.OtelCol.Spec.Ports, jaegerPort)
 		expected := service("test-collector", ports)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expected, *actual)
 
 	})
@@ -212,7 +213,7 @@ func TestDesiredService(t *testing.T) {
 		expected := serviceWithInternalTrafficPolicy("test-collector", ports, v1.ServiceInternalTrafficPolicyLocal)
 
 		actual, err := Service(p)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, expected, *actual)
 	})
@@ -255,7 +256,7 @@ func TestDesiredService(t *testing.T) {
 		actual, err := Service(params)
 		assert.NotNil(t, actual)
 		assert.Len(t, actual.Spec.Ports, 2)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 }
@@ -264,9 +265,9 @@ func TestHeadlessService(t *testing.T) {
 	t.Run("should return headless service", func(t *testing.T) {
 		param := deploymentParams()
 		actual, err := HeadlessService(param)
-		assert.NoError(t, err)
-		assert.Equal(t, actual.GetAnnotations()["service.beta.openshift.io/serving-cert-secret-name"], "test-collector-headless-tls")
-		assert.Equal(t, actual.Spec.ClusterIP, "None")
+		require.NoError(t, err)
+		assert.Equal(t, "test-collector-headless-tls", actual.GetAnnotations()["service.beta.openshift.io/serving-cert-secret-name"])
+		assert.Equal(t, "None", actual.Spec.ClusterIP)
 	})
 }
 
@@ -279,7 +280,7 @@ func TestMonitoringService(t *testing.T) {
 		param := deploymentParams()
 
 		actual, err := MonitoringService(param)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, expected, actual.Spec.Ports)
 	})
@@ -304,7 +305,7 @@ func TestMonitoringService(t *testing.T) {
 		}
 
 		actual, err := MonitoringService(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.NotNil(t, actual)
 		assert.Equal(t, expected, actual.Spec.Ports)
@@ -492,13 +493,13 @@ func TestExtensionService(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			actual, err := ExtensionService(tc.params)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			if len(tc.expectedPorts) > 0 {
 				assert.NotNil(t, actual)
 				assert.Equal(t, actual.Name, naming.ExtensionService(tc.params.OtelCol.Name))
 				// ports assertion
-				assert.Equal(t, len(tc.expectedPorts), len(actual.Spec.Ports))
+				assert.Len(t, actual.Spec.Ports, len(tc.expectedPorts))
 				assert.Equal(t, tc.expectedPorts[0].Name, actual.Spec.Ports[0].Name)
 				assert.Equal(t, tc.expectedPorts[0].Port, actual.Spec.Ports[0].Port)
 				assert.Equal(t, tc.expectedPorts[0].TargetPort.IntVal, actual.Spec.Ports[0].TargetPort.IntVal)
@@ -554,18 +555,18 @@ func TestServiceWithIpFamily(t *testing.T) {
 			"IPv6",
 		}
 		actual, err := Service(params)
-		assert.NoError(t, err)
-		assert.Equal(t, actual.Spec.IPFamilies, []v1.IPFamily{
+		require.NoError(t, err)
+		assert.Equal(t, []v1.IPFamily{
 			"IPv4",
 			"IPv6",
-		})
+		}, actual.Spec.IPFamilies)
 	})
 	t.Run("should return IPPolicy SingleStack", func(t *testing.T) {
 		params := deploymentParams()
 		baseIpFamily := v1.IPFamilyPolicySingleStack
 		params.OtelCol.Spec.IpFamilyPolicy = &baseIpFamily
 		actual, err := Service(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, actual.Spec.IPFamilyPolicy, params.OtelCol.Spec.IpFamilyPolicy)
 	})
 	t.Run("should return IPPolicy PreferDualStack", func(t *testing.T) {
@@ -573,7 +574,7 @@ func TestServiceWithIpFamily(t *testing.T) {
 		baseIpFamily := v1.IPFamilyPolicyPreferDualStack
 		params.OtelCol.Spec.IpFamilyPolicy = &baseIpFamily
 		actual, err := Service(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, actual.Spec.IPFamilyPolicy, params.OtelCol.Spec.IpFamilyPolicy)
 	})
 	t.Run("should return IPPolicy RequireDualStack ", func(t *testing.T) {
@@ -581,7 +582,7 @@ func TestServiceWithIpFamily(t *testing.T) {
 		baseIpFamily := v1.IPFamilyPolicyRequireDualStack
 		params.OtelCol.Spec.IpFamilyPolicy = &baseIpFamily
 		actual, err := Service(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, actual.Spec.IPFamilyPolicy, params.OtelCol.Spec.IpFamilyPolicy)
 	})
 }
@@ -592,14 +593,14 @@ func TestServiceWithTrafficDistribution(t *testing.T) {
 		trafficDistribution := "PreferClose"
 		params.OtelCol.Spec.TrafficDistribution = &trafficDistribution
 		actual, err := Service(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, &trafficDistribution, actual.Spec.TrafficDistribution)
 	})
 
 	t.Run("should not set TrafficDistribution when not specified", func(t *testing.T) {
 		params := deploymentParams()
 		actual, err := Service(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Nil(t, actual.Spec.TrafficDistribution)
 	})
 }

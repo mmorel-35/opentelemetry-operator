@@ -72,7 +72,7 @@ func TestDesiredServiceMonitorsWithEmptyExtraLabels(t *testing.T) {
 	actual := ServiceMonitor(params)
 	assert.NotNil(t, actual)
 	assert.Equal(t, fmt.Sprintf("%s-targetallocator", params.TargetAllocator.Name), actual.Name)
-	assert.Equal(t, params.TargetAllocator.Spec.Observability.Metrics.ExtraLabels, map[string]string{})
+	assert.Equal(t, map[string]string{}, params.TargetAllocator.Spec.Observability.Metrics.ExtraLabels)
 }
 
 func TestDesiredServiceMonitorsWithExtraLabels(t *testing.T) {

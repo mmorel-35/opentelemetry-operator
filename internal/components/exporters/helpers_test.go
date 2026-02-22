@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/open-telemetry/opentelemetry-operator/internal/components"
 	"github.com/open-telemetry/opentelemetry-operator/internal/naming"
@@ -21,8 +22,8 @@ func TestParserForReturns(t *testing.T) {
 	ports, err := parser.Ports(logr.Discard(), testComponentName, map[string]any{
 		"endpoint": "localhost:9000",
 	})
-	assert.NoError(t, err)
-	assert.Len(t, ports, 0) // Should use the nop parser
+	require.NoError(t, err)
+	assert.Empty(t, ports) // Should use the nop parser
 }
 
 func TestCanRegister(t *testing.T) {
@@ -32,9 +33,9 @@ func TestCanRegister(t *testing.T) {
 	assert.Equal(t, "test", parser.ParserType())
 	assert.Equal(t, "__test", parser.ParserName())
 	ports, err := parser.Ports(logr.Discard(), testComponentName, map[string]any{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, ports, 1)
-	assert.Equal(t, ports[0].Port, int32(9000))
+	assert.Equal(t, int32(9000), ports[0].Port)
 }
 
 func TestExporterComponentParsers(t *testing.T) {
@@ -58,7 +59,7 @@ func TestExporterComponentParsers(t *testing.T) {
 				_, err := parser.Ports(logr.Discard(), tt.exporterName, func() {})
 
 				// verify
-				assert.ErrorContains(t, err, "expected a map, got ")
+				require.ErrorContains(t, err, "expected a map, got ")
 			})
 
 			t.Run("assigns the expected port", func(t *testing.T) {
@@ -69,13 +70,13 @@ func TestExporterComponentParsers(t *testing.T) {
 				ports, err := parser.Ports(logr.Discard(), tt.exporterName, map[string]any{})
 
 				if tt.defaultPort == 0 {
-					assert.Len(t, ports, 0)
+					assert.Empty(t, ports)
 					return
 				}
 				// verify
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Len(t, ports, 1)
-				assert.EqualValues(t, tt.defaultPort, ports[0].Port)
+				assert.Equal(t, tt.defaultPort, ports[0].Port)
 				assert.Equal(t, naming.PortName(tt.exporterName, tt.defaultPort), ports[0].Name)
 			})
 
@@ -89,7 +90,7 @@ func TestExporterComponentParsers(t *testing.T) {
 				})
 
 				// verify
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Len(t, ports, 1)
 				assert.EqualValues(t, 65535, ports[0].Port)
 				assert.Equal(t, naming.PortName(tt.exporterName, tt.defaultPort), ports[0].Name)

@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	ta "github.com/open-telemetry/opentelemetry-operator/internal/manifests/targetallocator/adapters"
 )
@@ -42,7 +43,7 @@ func TestExtractPromConfigFromConfig(t *testing.T) {
 
 	// test
 	promConfig, err := ta.ConfigToPromConfig(configStr)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// verify
 	assert.Equal(t, expectedData, promConfig)
@@ -80,7 +81,7 @@ func TestExtractPromConfigWithTAConfigFromConfig(t *testing.T) {
 
 	// test
 	promConfig, err := ta.ConfigToPromConfig(configStr)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// verify
 	assert.Equal(t, expectedData, promConfig)
@@ -277,7 +278,7 @@ func TestAddHTTPSDConfigToPromConfig(t *testing.T) {
 		}
 
 		actualCfg, err := ta.AddHTTPSDConfigToPromConfig(cfg, taServiceName)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedCfg, actualCfg)
 	})
 
@@ -298,7 +299,7 @@ func TestAddHTTPSDConfigToPromConfig(t *testing.T) {
 		taServiceName := "test-service"
 
 		_, err := ta.AddHTTPSDConfigToPromConfig(cfg, taServiceName)
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.EqualError(t, err, "no scrape_configs available as part of the configuration")
 	})
 }
@@ -335,7 +336,7 @@ func TestAddTAConfigToPromConfig(t *testing.T) {
 
 		result, err := ta.AddTAConfigToPromConfig(cfg, taServiceName)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedResult, result)
 	})
 
@@ -365,7 +366,7 @@ func TestAddTAConfigToPromConfig(t *testing.T) {
 			t.Run(tc.name, func(t *testing.T) {
 				_, err := ta.AddTAConfigToPromConfig(tc.cfg, taServiceName)
 
-				assert.Error(t, err)
+				require.Error(t, err)
 				assert.EqualError(t, err, tc.errText)
 			})
 		}
@@ -544,7 +545,7 @@ func TestAddTAConfigToPromConfigWithTLSConfig(t *testing.T) {
 
 		result, err := ta.AddTAConfigToPromConfig(cfg, taServiceName, ta.WithTLSConfig("ca.crt", "tls.crt", "tls.key", taServiceName))
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedResult, result)
 	})
 }
@@ -581,7 +582,7 @@ func TestAddTAConfigToPromConfigWithCollectorTargetReloadInterval(t *testing.T) 
 
 		result, err := ta.AddTAConfigToPromConfig(cfg, taServiceName, ta.WithCollectorTargetReloadInterval("10s"))
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedResult, result)
 	})
 }

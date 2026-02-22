@@ -657,5 +657,5 @@ func TestContainerImagePullPolicy(t *testing.T) {
 	c := Container(cfg, logger, targetAllocator)
 
 	// verify
-	assert.Equal(t, c.ImagePullPolicy, corev1.PullIfNotPresent)
+	assert.Equal(t, corev1.PullIfNotPresent, c.ImagePullPolicy)
 }

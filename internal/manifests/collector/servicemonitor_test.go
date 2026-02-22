@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/open-telemetry/opentelemetry-operator/internal/autodetect/openshift"
 	"github.com/open-telemetry/opentelemetry-operator/internal/autodetect/prometheus"
@@ -18,17 +19,17 @@ func TestDesiredServiceMonitors(t *testing.T) {
 	params := deploymentParams()
 
 	actual, err := ServiceMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Nil(t, actual)
 
 	params.OtelCol.Spec.Observability.Metrics.EnableMetrics = true
 	actual, err = ServiceMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Nil(t, actual)
 
 	// Check the monitoring SM
 	actual, err = ServiceMonitorMonitoring(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, actual)
 	assert.Equal(t, fmt.Sprintf("%s-monitoring-collector", params.OtelCol.Name), actual.Name)
 	assert.Equal(t, params.OtelCol.Namespace, actual.Namespace)
@@ -46,10 +47,10 @@ func TestDesiredServiceMonitors(t *testing.T) {
 
 func TestDesiredServiceMonitorsWithPrometheus(t *testing.T) {
 	params, err := newParams("", "testdata/prometheus-exporter.yaml", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	params.OtelCol.Spec.Observability.Metrics.EnableMetrics = true
 	actual, err := ServiceMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, actual)
 	assert.Equal(t, fmt.Sprintf("%s-collector", params.OtelCol.Name), actual.Name)
 	assert.Equal(t, params.OtelCol.Namespace, actual.Namespace)
@@ -72,22 +73,22 @@ func TestDesiredServiceMonitorsPrometheusNotAvailable(t *testing.T) {
 		OpenShiftRoutesAvailability: openshift.RoutesAvailable,
 		PrometheusCRAvailability:    prometheus.NotAvailable,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	params.OtelCol.Spec.Observability.Metrics.EnableMetrics = true
 	actual, err := ServiceMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Nil(t, actual)
 }
 
 func TestDesiredServiceMonitorsWithEmptyExtraLabels(t *testing.T) {
 	params, err := newParams("", "testdata/prometheus-exporter.yaml", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	params.OtelCol.Spec.Observability.Metrics.EnableMetrics = true
 
 	params.OtelCol.Spec.Observability.Metrics.ExtraLabels = nil
 
 	actual, err := ServiceMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, actual)
 	assert.Equal(t, fmt.Sprintf("%s-collector", params.OtelCol.Name), actual.Name)
 	assert.Equal(t, params.OtelCol.Namespace, actual.Namespace)
@@ -116,7 +117,7 @@ func TestDesiredServiceMonitorsWithEmptyExtraLabels(t *testing.T) {
 
 func TestDesiredServiceMonitorsWithExtraLabels(t *testing.T) {
 	params, err := newParams("", "testdata/prometheus-exporter.yaml", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	params.OtelCol.Spec.Observability.Metrics.EnableMetrics = true
 
 	params.OtelCol.Spec.Observability.Metrics.ExtraLabels = map[string]string{
@@ -127,7 +128,7 @@ func TestDesiredServiceMonitorsWithExtraLabels(t *testing.T) {
 	}
 
 	actual, err := ServiceMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, actual)
 	assert.Equal(t, fmt.Sprintf("%s-collector", params.OtelCol.Name), actual.Name)
 	assert.Equal(t, params.OtelCol.Namespace, actual.Namespace)

@@ -77,5 +77,5 @@ func TestVolumeClaimChecksForStatefulset(t *testing.T) {
 	volumeClaims := VolumeClaimTemplates(otelcol)
 
 	// verify that volume claim replaces
-	assert.Len(t, volumeClaims, 0)
+	assert.Empty(t, volumeClaims)
 }

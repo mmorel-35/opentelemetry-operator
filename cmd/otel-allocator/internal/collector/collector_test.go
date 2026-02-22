@@ -125,7 +125,7 @@ func Test_runWatch(t *testing.T) {
 					for _, k := range []string{"test-pod1", "test-pod2", "test-pod3"} {
 						p := pod(k)
 						_, err := podWatcher.k8sClient.CoreV1().Pods(namespace).Create(context.Background(), p, metav1.CreateOptions{})
-						assert.NoError(t, err)
+						require.NoError(t, err)
 					}
 				},
 				collectorMap: map[string]*allocation.Collector{},
@@ -155,7 +155,7 @@ func Test_runWatch(t *testing.T) {
 				kubeFn: func(t *testing.T, podWatcher *Watcher) {
 					for _, k := range []string{"test-pod2", "test-pod3"} {
 						err := podWatcher.k8sClient.CoreV1().Pods(namespace).Delete(context.Background(), k, metav1.DeleteOptions{})
-						assert.NoError(t, err)
+						require.NoError(t, err)
 					}
 				},
 				collectorMap: map[string]*allocation.Collector{
@@ -193,7 +193,7 @@ func Test_runWatch(t *testing.T) {
 			for _, k := range tt.args.collectorMap {
 				p := pod(k.Name)
 				_, err := podWatcher.k8sClient.CoreV1().Pods("test-ns").Create(context.Background(), p, metav1.CreateOptions{})
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 			go func() {
 				err := podWatcher.Watch(namespace, &labelSelector, func(colMap map[string]*allocation.Collector) {
@@ -322,7 +322,7 @@ func Test_gracePeriodWithNonRunningPodPhase(t *testing.T) {
 						timeNow.Add(-1*podWatcher.collectorNotReadyGracePeriod).Add(-podWatcher.collectorNotReadyGracePeriod/2))
 				}
 				_, err := podWatcher.k8sClient.CoreV1().Pods("test-ns").Create(context.Background(), p, metav1.CreateOptions{})
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			go func() {
@@ -338,7 +338,7 @@ func Test_gracePeriodWithNonRunningPodPhase(t *testing.T) {
 				mapMutex.Lock()
 				defer mapMutex.Unlock()
 				assert.Len(collect, actual, len(tt.want))
-				assert.Equal(collect, actual, tt.want)
+				assert.Equal(collect, tt.want, actual)
 				assert.Equal(collect, podWatcher.collectorsDiscovered.(*reportingGauge).value.Load(), int64(len(actual)))
 			}, time.Second*3, time.Millisecond)
 		})
@@ -450,7 +450,7 @@ func Test_gracePeriodWithNonReadyPodCondition(t *testing.T) {
 						timeNow.Add(-1*podWatcher.collectorNotReadyGracePeriod).Add(-podWatcher.collectorNotReadyGracePeriod/2))
 				}
 				_, err := podWatcher.k8sClient.CoreV1().Pods("test-ns").Create(context.Background(), p, metav1.CreateOptions{})
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
 			go func() {
@@ -466,7 +466,7 @@ func Test_gracePeriodWithNonReadyPodCondition(t *testing.T) {
 				mapMutex.Lock()
 				defer mapMutex.Unlock()
 				assert.Len(collect, actual, len(tt.want))
-				assert.Equal(collect, actual, tt.want)
+				assert.Equal(collect, tt.want, actual)
 				assert.Equal(collect, podWatcher.collectorsDiscovered.(*reportingGauge).value.Load(), int64(len(actual)))
 			}, time.Second*3, time.Millisecond)
 		})

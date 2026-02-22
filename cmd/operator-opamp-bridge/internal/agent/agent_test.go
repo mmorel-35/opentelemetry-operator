@@ -254,7 +254,7 @@ func getFakeApplier(t *testing.T, conf *config.Config, lists ...runtimeClient.Ob
 	})
 	scheme := runtime.NewScheme()
 	err := schemeBuilder.AddToScheme(scheme)
-	require.NoError(t, err, "Should be able to add custom types")
+	require.NoErrorf(t, err, "Should be able to add custom types")
 	c := fake.NewClientBuilder().WithLists(lists...).WithScheme(scheme)
 	return operator.NewClient("test-bridge", l, c.Build(), conf.GetComponentsAllowed())
 }
@@ -532,7 +532,7 @@ func TestAgent_getHealth(t *testing.T) {
 			mockClient := &mockOpampClient{}
 			conf := config.NewConfig(logr.Discard())
 			loadErr := config.LoadFromFile(conf, tt.fields.configFile)
-			require.NoError(t, loadErr, "should be able to load config")
+			require.NoErrorf(t, loadErr, "should be able to load config")
 			applier := getFakeApplier(t, conf, tt.args.podList)
 			mp := newMockProxy(nil, tt.args.healths, tt.args.agentsByHostname)
 			agent := NewAgent(l, applier, conf, mockClient, mp)
@@ -540,23 +540,23 @@ func TestAgent_getHealth(t *testing.T) {
 			err := agent.Start()
 			defer agent.Shutdown()
 
-			require.NoError(t, err, "should be able to start agent")
+			require.NoErrorf(t, err, "should be able to start agent")
 			if len(tt.args.configs) > 0 {
-				require.Len(t, tt.args.configs, len(tt.want), "must have an equal amount of configs and checks.")
+				require.Lenf(t, tt.args.configs, len(tt.want), "must have an equal amount of configs and checks.")
 			} else {
-				require.Len(t, tt.want, 1, "must have exactly one want if no config is supplied.")
+				require.Lenf(t, tt.want, 1, "must have exactly one want if no config is supplied.")
 				require.Equal(t, tt.want[0], agent.getHealth())
 			}
 
 			for i, configMap := range tt.args.configs {
 				var data *types.MessageData
 				data, err := getMessageDataFromConfigFile(configMap)
-				require.NoError(t, err, "should be able to load data")
+				require.NoErrorf(t, err, "should be able to load data")
 				agent.onMessage(tt.args.ctx, data)
 				effectiveConfig, err := agent.getEffectiveConfig(tt.args.ctx)
-				require.NoError(t, err, "should be able to get effective config")
+				require.NoErrorf(t, err, "should be able to get effective config")
 				// We should only expect this to happen if we supply configuration
-				assert.Equal(t, effectiveConfig, mockClient.lastEffectiveConfig, "client's config should be updated")
+				assert.Equalf(t, effectiveConfig, mockClient.lastEffectiveConfig, "client's config should be updated")
 				assert.NotNilf(t, effectiveConfig.ConfigMap.GetConfigMap(), "configmap should have data")
 				assert.Equal(t, tt.want[i], agent.getHealth())
 			}
@@ -1013,22 +1013,22 @@ func TestAgent_onMessage(t *testing.T) {
 
 			conf := config.NewConfig(logr.Discard())
 			loadErr := config.LoadFromFile(conf, tt.fields.configFile)
-			require.NoError(t, loadErr, "should be able to load config")
+			require.NoErrorf(t, loadErr, "should be able to load config")
 
 			applier := getFakeApplier(t, conf)
 			agent := NewAgent(l, applier, conf, mockClient, mp)
 			err := agent.Start()
 			defer agent.Shutdown()
-			require.NoError(t, err, "should be able to start agent")
+			require.NoErrorf(t, err, "should be able to start agent")
 
 			data, err := getMessageDataFromConfigFile(tt.args.configFile)
-			require.NoError(t, err, "should be able to load data")
+			require.NoErrorf(t, err, "should be able to load data")
 			agent.onMessage(tt.args.ctx, data)
 			effectiveConfig, err := agent.getEffectiveConfig(tt.args.ctx)
-			require.NoError(t, err, "should be able to get effective config")
+			require.NoErrorf(t, err, "should be able to get effective config")
 			if tt.args.configFile != nil {
 				// We should only expect this to happen if we supply configuration
-				assert.Equal(t, effectiveConfig, mockClient.lastEffectiveConfig, "client's config should be updated")
+				assert.Equalf(t, effectiveConfig, mockClient.lastEffectiveConfig, "client's config should be updated")
 			}
 			assert.NotNilf(t, effectiveConfig.ConfigMap.GetConfigMap(), "configmap should have data")
 			assert.Len(t, effectiveConfig.ConfigMap.ConfigMap, len(tt.want.contents))
@@ -1037,7 +1037,7 @@ func TestAgent_onMessage(t *testing.T) {
 				require.Contains(t, configFileMap, colNameNamespace)
 				configFileString := string(configFileMap[colNameNamespace].GetBody())
 				for _, content := range expectedContents {
-					assert.Contains(t, configFileString, content, "config should contain %s", content)
+					assert.Containsf(t, configFileString, content, "config should contain %s", content)
 				}
 			}
 			assert.Equal(t, tt.want.status, mockClient.lastStatus)
@@ -1048,11 +1048,11 @@ func TestAgent_onMessage(t *testing.T) {
 			}
 
 			nextData, err := getMessageDataFromConfigFile(tt.args.nextConfigFile)
-			require.NoError(t, err, "should be able to load updated data")
+			require.NoErrorf(t, err, "should be able to load updated data")
 			agent.onMessage(tt.args.ctx, nextData)
 			nextEffectiveConfig, err := agent.getEffectiveConfig(tt.args.ctx)
-			require.NoError(t, err, "should be able to get updated effective config")
-			assert.Equal(t, nextEffectiveConfig, mockClient.lastEffectiveConfig, "client's config should be updated")
+			require.NoErrorf(t, err, "should be able to get updated effective config")
+			assert.Equalf(t, nextEffectiveConfig, mockClient.lastEffectiveConfig, "client's config should be updated")
 			assert.NotNilf(t, nextEffectiveConfig.ConfigMap.GetConfigMap(), "configmap should have updated data")
 			for colNameNamespace, expectedContents := range tt.want.nextContents {
 				configFileMap := nextEffectiveConfig.ConfigMap.GetConfigMap()
@@ -1073,16 +1073,16 @@ func Test_CanUpdateIdentity(t *testing.T) {
 	fs := config.GetFlagSet(pflag.ContinueOnError)
 	configFlag := []string{"--config-file", agentTestFileName}
 	err := fs.Parse(configFlag)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	conf := config.NewConfig(logr.Discard())
 	loadErr := config.LoadFromFile(conf, agentTestFileName)
-	require.NoError(t, loadErr, "should be able to load config")
+	require.NoErrorf(t, loadErr, "should be able to load config")
 	applier := getFakeApplier(t, conf)
 	mp := newMockProxy(nil, nil, nil)
 	agent := NewAgent(l, applier, conf, mockClient, mp)
 	err = agent.Start()
 	defer agent.Shutdown()
-	require.NoError(t, err, "should be able to start agent")
+	require.NoErrorf(t, err, "should be able to start agent")
 	previousInstanceId := agent.instanceId.String()
 	newId, err := uuid.NewV7()
 	require.NoError(t, err)
@@ -1108,10 +1108,10 @@ func TestAgent_ListensForUpdates(t *testing.T) {
 
 	agent := NewAgent(logr.Discard(), applier, conf, mockClient, mockProxy)
 	err := agent.Start()
-	require.NoError(t, err, "should be able to start agent")
+	require.NoErrorf(t, err, "should be able to start agent")
 	defer agent.Shutdown()
 	mockClient.mu.Lock()
-	assert.Len(t, mockClient.lastHealth.ComponentHealthMap, 0)
+	assert.Empty(t, mockClient.lastHealth.ComponentHealthMap)
 	assert.Nil(t, mockClient.lastEffectiveConfig, 0)
 	mockClient.mu.Unlock()
 	mockInstanceId := uuid.New()
@@ -1138,7 +1138,7 @@ func TestAgent_ListensForUpdates(t *testing.T) {
 	mockProxy.mu.Unlock()
 
 	mockClient.mu.Lock()
-	assert.Len(t, mockClient.lastHealth.ComponentHealthMap, 0)
+	assert.Empty(t, mockClient.lastHealth.ComponentHealthMap)
 	assert.Nil(t, mockClient.lastEffectiveConfig, 0)
 	mockClient.mu.Unlock()
 

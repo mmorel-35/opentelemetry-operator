@@ -68,7 +68,7 @@ func TestToStringMap(t *testing.T) {
 
 func TestMissingFile(t *testing.T) {
 	err := ApplyConfigFile("testdata/missing.yaml", &Config{})
-	require.Error(t, err, "missing file")
+	require.Errorf(t, err, "missing file")
 }
 
 func TestApply(t *testing.T) {

@@ -14,7 +14,6 @@ import (
 	"github.com/prometheus/common/model"
 	promconfig "github.com/prometheus/prometheus/config"
 	"github.com/prometheus/prometheus/model/labels"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator/internal/allocation"
@@ -70,7 +69,7 @@ func BenchmarkScrapeConfigsHandler(b *testing.B) {
 	tests := []int{0, 5, 10, 50, 100, 500}
 	for _, n := range tests {
 		data := makeNScrapeConfigs(*random, n)
-		assert.NoError(b, s.UpdateScrapeConfigResponse(data))
+		require.NoError(b, s.UpdateScrapeConfigResponse(data))
 
 		b.Run(fmt.Sprintf("%d_targets", n), func(b *testing.B) {
 			b.ReportAllocs()

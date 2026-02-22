@@ -1478,7 +1478,7 @@ func TestNoImmutableLabelChange(t *testing.T) {
 	}
 	err := hasImmutableLabelChange(existingSelectorLabels, desiredLabels)
 	require.NoError(t, err)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestHasImmutableLabelChange(t *testing.T) {
@@ -1495,7 +1495,7 @@ func TestHasImmutableLabelChange(t *testing.T) {
 		"app.kubernetes.io/part-of":    "not-opentelemetry",
 	}
 	err := hasImmutableLabelChange(existingSelectorLabels, desiredLabels)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestMissingImmutableLabelChange(t *testing.T) {
@@ -1511,7 +1511,7 @@ func TestMissingImmutableLabelChange(t *testing.T) {
 		"app.kubernetes.io/managed-by": "opentelemetry-operator",
 	}
 	err := hasImmutableLabelChange(existingSelectorLabels, desiredLabels)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestMutateDaemonsetError(t *testing.T) {
@@ -1665,7 +1665,7 @@ func TestMutateDaemonsetError(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mutateFn := MutateFuncFor(&tt.existing, &tt.desired)
 			err := mutateFn()
-			assert.Error(t, err)
+			require.Error(t, err)
 		})
 	}
 }
@@ -1821,7 +1821,7 @@ func TestMutateDeploymentError(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mutateFn := MutateFuncFor(&tt.existing, &tt.desired)
 			err := mutateFn()
-			assert.Error(t, err)
+			require.Error(t, err)
 		})
 	}
 }
@@ -2041,7 +2041,7 @@ func TestMutateStatefulSetError(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mutateFn := MutateFuncFor(&tt.existing, &tt.desired)
 			err := mutateFn()
-			assert.Error(t, err)
+			require.Error(t, err)
 		})
 	}
 }
@@ -2621,7 +2621,7 @@ func TestGetMutateFunc_MutateNetworkPolicy(t *testing.T) {
 	require.NoError(t, err)
 
 	// Partial mutation checks
-	require.Exactly(t, got.Labels, want.Labels)
-	require.Exactly(t, got.Annotations, want.Annotations)
-	require.Exactly(t, got.Spec, want.Spec)
+	require.Exactly(t, want.Labels, got.Labels)
+	require.Exactly(t, want.Annotations, got.Annotations)
+	require.Exactly(t, want.Spec, got.Spec)
 }

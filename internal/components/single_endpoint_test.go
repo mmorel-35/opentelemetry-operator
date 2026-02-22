@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
@@ -123,7 +124,7 @@ func TestSingleEndpointParser_ParserName(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s, err := tt.fields.b.Build()
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equalf(t, tt.want, s.ParserName(), "ParserName()")
 		})
 	}
@@ -156,7 +157,7 @@ func TestSingleEndpointParser_ParserType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s, err := tt.fields.b.Build()
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equalf(t, tt.want, s.ParserType(), "ParserType()")
 		})
 	}
@@ -265,7 +266,7 @@ func TestSingleEndpointParser_Ports(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s, err := tt.fields.b.Build()
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			got, err := s.Ports(logr.Discard(), s.ParserType(), tt.args.config)
 			if !tt.wantErr(t, err, fmt.Sprintf("Ports(%v)", tt.args.config)) {
 				return
@@ -368,7 +369,7 @@ func TestNewSilentSinglePortParser_Ports(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s, err := tt.fields.b.Build()
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			got, err := s.Ports(logr.Discard(), s.ParserType(), tt.args.config)
 			if !tt.wantErr(t, err, fmt.Sprintf("Ports(%v)", tt.args.config)) {
 				return

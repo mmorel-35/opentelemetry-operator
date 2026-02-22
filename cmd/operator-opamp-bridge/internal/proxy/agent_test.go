@@ -19,9 +19,9 @@ func TestNewAgent(t *testing.T) {
 	conn := &mockConnection{}
 
 	agent := NewAgent(logger, instanceId, conn)
-	require.NotNil(t, agent, "agent should not be nil")
-	assert.Equal(t, instanceId, agent.InstanceId, "instance ID should match")
-	assert.Equal(t, conn, agent.conn, "connection should match")
+	require.NotNilf(t, agent, "agent should not be nil")
+	assert.Equalf(t, instanceId, agent.InstanceId, "instance ID should match")
+	assert.Equalf(t, conn, agent.conn, "connection should match")
 }
 
 func TestAgent_hasCapability(t *testing.T) {
@@ -34,8 +34,8 @@ func TestAgent_hasCapability(t *testing.T) {
 		Capabilities: uint64(protobufs.AgentCapabilities_AgentCapabilities_ReportsEffectiveConfig),
 	}
 
-	assert.True(t, agent.hasCapability(protobufs.AgentCapabilities_AgentCapabilities_ReportsEffectiveConfig), "should have capability")
-	assert.False(t, agent.hasCapability(protobufs.AgentCapabilities_AgentCapabilities_ReportsHealth), "should not have capability")
+	assert.Truef(t, agent.hasCapability(protobufs.AgentCapabilities_AgentCapabilities_ReportsEffectiveConfig), "should have capability")
+	assert.Falsef(t, agent.hasCapability(protobufs.AgentCapabilities_AgentCapabilities_ReportsHealth), "should not have capability")
 }
 
 func TestAgent_UpdateStatus(t *testing.T) {
@@ -58,8 +58,8 @@ func TestAgent_UpdateStatus(t *testing.T) {
 	response := &protobufs.ServerToAgent{}
 	agent.UpdateStatus(newStatus, response)
 
-	assert.Equal(t, newStatus, agent.Status, "status should be updated")
-	assert.True(t, response.Flags&uint64(protobufs.ServerToAgentFlags_ServerToAgentFlags_ReportFullState) != 0, "should request full state")
+	assert.Equalf(t, newStatus, agent.Status, "status should be updated")
+	assert.NotEqualf(t, 0, response.Flags&uint64(protobufs.ServerToAgentFlags_ServerToAgentFlags_ReportFullState), "should request full state")
 }
 
 func TestAgent_GetHealth(t *testing.T) {
@@ -73,7 +73,7 @@ func TestAgent_GetHealth(t *testing.T) {
 	}
 	agent.health = health
 
-	assert.Equal(t, health, agent.GetHealth(), "health should match")
+	assert.Equalf(t, health, agent.GetHealth(), "health should match")
 }
 
 func TestAgent_GetConfiguration(t *testing.T) {
@@ -91,5 +91,5 @@ func TestAgent_GetConfiguration(t *testing.T) {
 	}
 	agent.effectiveConfig = config
 
-	assert.Equal(t, config, agent.GetConfiguration(), "configuration should match")
+	assert.Equalf(t, config, agent.GetConfiguration(), "configuration should match")
 }

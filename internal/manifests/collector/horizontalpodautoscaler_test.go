@@ -84,7 +84,7 @@ func TestHPA(t *testing.T) {
 				assert.Equal(t, "my-instance-collector", hpa.Labels["app.kubernetes.io/name"])
 				assert.Equal(t, &minReplicas, hpa.Spec.MinReplicas)
 				assert.Equal(t, maxReplicas, hpa.Spec.MaxReplicas)
-				assert.Equal(t, 2, len(hpa.Spec.Metrics))
+				assert.Len(t, hpa.Spec.Metrics, 2)
 
 				for _, metric := range hpa.Spec.Metrics {
 					switch metric.Resource.Name { //nolint:exhaustive

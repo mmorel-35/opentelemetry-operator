@@ -164,14 +164,14 @@ func TestServer_TargetsHandler(t *testing.T) {
 			assert.Equal(t, http.StatusOK, result.StatusCode)
 			body := result.Body
 			bodyBytes, err := io.ReadAll(body)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			if len(tt.want.errString) != 0 {
 				assert.EqualError(t, err, tt.want.errString)
 				return
 			}
 			var itemResponse []*targetJSON
 			err = json.Unmarshal(bodyBytes, &itemResponse)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.ElementsMatch(t, tt.want.items, itemResponse)
 		})
 	}
@@ -493,7 +493,7 @@ func TestServer_ScrapeConfigsHandler(t *testing.T) {
 			listenAddr := ":8080"
 			s, err := NewServer(logger, nil, listenAddr, tc.serverOptions...)
 			require.NoError(t, err)
-			assert.NoError(t, s.UpdateScrapeConfigResponse(tc.scrapeConfigs))
+			require.NoError(t, s.UpdateScrapeConfigResponse(tc.scrapeConfigs))
 
 			request := httptest.NewRequest("GET", "/scrape_configs", nil)
 			w := httptest.NewRecorder()
@@ -731,7 +731,7 @@ func TestServer_JobHandler_HTML(t *testing.T) {
 			assert.Equal(t, http.StatusOK, result.StatusCode)
 			body := result.Body
 			bodyBytes, err := io.ReadAll(body)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			golden.Assert(t, string(bodyBytes), tt.Golden)
 		})
 	}
@@ -790,7 +790,7 @@ func TestServer_IndexHandler(t *testing.T) {
 			assert.Equal(t, http.StatusOK, result.StatusCode)
 			body := result.Body
 			bodyBytes, err := io.ReadAll(body)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			golden.Assert(t, string(bodyBytes), tc.Golden)
 		})
 	}
@@ -848,7 +848,7 @@ func TestServer_TargetsHTMLHandler(t *testing.T) {
 			assert.Equal(t, http.StatusOK, result.StatusCode)
 			body := result.Body
 			bodyBytes, err := io.ReadAll(body)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			golden.Assert(t, string(bodyBytes), tc.Golden)
 		})
 	}
@@ -937,7 +937,7 @@ func TestServer_CollectorHandler(t *testing.T) {
 			assert.Equal(t, tc.expectedCode, result.StatusCode)
 			body := result.Body
 			bodyBytes, err := io.ReadAll(body)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			golden.Assert(t, string(bodyBytes), tc.Golden)
 		})
 	}
@@ -1004,7 +1004,7 @@ func TestServer_TargetHTMLHandler(t *testing.T) {
 			assert.Equal(t, tc.expectedCode, result.StatusCode)
 			body := result.Body
 			bodyBytes, err := io.ReadAll(body)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			golden.Assert(t, string(bodyBytes), tc.Golden)
 		})
 	}
@@ -1061,7 +1061,7 @@ func TestServer_Readiness(t *testing.T) {
 			s, err := NewServer(logger, nil, listenAddr)
 			require.NoError(t, err)
 			if tc.scrapeConfigs != nil {
-				assert.NoError(t, s.UpdateScrapeConfigResponse(tc.scrapeConfigs))
+				require.NoError(t, s.UpdateScrapeConfigResponse(tc.scrapeConfigs))
 			}
 
 			request := httptest.NewRequest("GET", "/readyz", nil)
@@ -1113,7 +1113,7 @@ func TestServer_ScrapeConfigResponse(t *testing.T) {
 				jobToScrapeConfig[scrapeConfig.JobName] = scrapeConfig
 			}
 
-			assert.NoError(t, s.UpdateScrapeConfigResponse(jobToScrapeConfig))
+			require.NoError(t, s.UpdateScrapeConfigResponse(jobToScrapeConfig))
 
 			request := httptest.NewRequest("GET", "/scrape_configs", nil)
 			w := httptest.NewRecorder()

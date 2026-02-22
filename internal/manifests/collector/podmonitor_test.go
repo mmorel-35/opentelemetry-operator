@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/open-telemetry/opentelemetry-operator/apis/v1beta1"
 	"github.com/open-telemetry/opentelemetry-operator/internal/autodetect/openshift"
@@ -24,12 +25,12 @@ func TestDesiredPodMonitors(t *testing.T) {
 	params := sidecarParams()
 
 	actual, err := PodMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Nil(t, actual)
 
 	params.OtelCol.Spec.Observability.Metrics.EnableMetrics = true
 	actual, err = PodMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, actual)
 	assert.Equal(t, fmt.Sprintf("%s-collector", params.OtelCol.Name), actual.Name)
 	assert.Equal(t, params.OtelCol.Namespace, actual.Namespace)
@@ -45,11 +46,11 @@ func TestDesiredPodMonitors(t *testing.T) {
 
 func TestDesiredPodMonitorsWithPrometheus(t *testing.T) {
 	params, err := newParams("", "testdata/prometheus-exporter.yaml", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	params.OtelCol.Spec.Mode = v1beta1.ModeSidecar
 	params.OtelCol.Spec.Observability.Metrics.EnableMetrics = true
 	actual, err := PodMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, actual)
 	assert.Equal(t, fmt.Sprintf("%s-collector", params.OtelCol.Name), actual.Name)
 	assert.Equal(t, params.OtelCol.Namespace, actual.Namespace)
@@ -72,10 +73,10 @@ func TestDesiredPodMonitorsPrometheusNotAvailable(t *testing.T) {
 		OpenShiftRoutesAvailability: openshift.RoutesAvailable,
 		PrometheusCRAvailability:    prometheus.NotAvailable,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	params.OtelCol.Spec.Mode = v1beta1.ModeSidecar
 	params.OtelCol.Spec.Observability.Metrics.EnableMetrics = true
 	actual, err := PodMonitor(params)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Nil(t, actual)
 }

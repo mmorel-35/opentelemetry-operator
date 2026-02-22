@@ -387,7 +387,7 @@ service:
 			// test
 			c := Container(cfg, testLogger, otelcol, true)
 			// verify
-			assert.ElementsMatch(t, testCase.expectedPorts, c.Ports, testCase.description)
+			assert.ElementsMatchf(t, testCase.expectedPorts, c.Ports, testCase.description)
 		})
 	}
 }
@@ -532,9 +532,9 @@ func TestContainerDefaultEnvVars(t *testing.T) {
 
 	// verify
 	assert.Len(t, c.Env, 3)
-	assert.Equal(t, c.Env[0].Name, "POD_NAME")
-	assert.Equal(t, c.Env[1].Name, "GOMEMLIMIT")
-	assert.Equal(t, c.Env[2].Name, "GOMAXPROCS")
+	assert.Equal(t, "POD_NAME", c.Env[0].Name)
+	assert.Equal(t, "GOMEMLIMIT", c.Env[1].Name)
+	assert.Equal(t, "GOMAXPROCS", c.Env[2].Name)
 }
 
 func TestContainerProxyEnvVars(t *testing.T) {
@@ -662,7 +662,7 @@ func TestContainerImagePullPolicy(t *testing.T) {
 	c := Container(cfg, testLogger, otelcol, true)
 
 	// verify
-	assert.Equal(t, c.ImagePullPolicy, corev1.PullIfNotPresent)
+	assert.Equal(t, corev1.PullIfNotPresent, c.ImagePullPolicy)
 }
 
 func TestContainerEnvFrom(t *testing.T) {
@@ -750,7 +750,7 @@ service:
 	// liveness
 	assert.Equal(t, "/", c.LivenessProbe.HTTPGet.Path)
 	assert.Equal(t, int32(13133), c.LivenessProbe.HTTPGet.Port.IntVal)
-	assert.Equal(t, "", c.LivenessProbe.HTTPGet.Host)
+	assert.Empty(t, c.LivenessProbe.HTTPGet.Host)
 
 	assert.Equal(t, initialDelaySeconds, c.LivenessProbe.InitialDelaySeconds)
 	assert.Equal(t, timeoutSeconds, c.LivenessProbe.TimeoutSeconds)
@@ -762,7 +762,7 @@ service:
 	// rediness
 	assert.Equal(t, "/", c.ReadinessProbe.HTTPGet.Path)
 	assert.Equal(t, int32(13133), c.ReadinessProbe.HTTPGet.Port.IntVal)
-	assert.Equal(t, "", c.ReadinessProbe.HTTPGet.Host)
+	assert.Empty(t, c.ReadinessProbe.HTTPGet.Host)
 
 	assert.Equal(t, initialDelaySeconds, c.ReadinessProbe.InitialDelaySeconds)
 	assert.Equal(t, timeoutSeconds, c.ReadinessProbe.TimeoutSeconds)
@@ -774,7 +774,7 @@ service:
 	// startup
 	assert.Equal(t, "/", c.StartupProbe.HTTPGet.Path)
 	assert.Equal(t, int32(13133), c.StartupProbe.HTTPGet.Port.IntVal)
-	assert.Equal(t, "", c.StartupProbe.HTTPGet.Host)
+	assert.Empty(t, c.StartupProbe.HTTPGet.Host)
 
 	assert.Equal(t, initialDelaySeconds, c.StartupProbe.InitialDelaySeconds)
 	assert.Equal(t, timeoutSeconds, c.StartupProbe.TimeoutSeconds)
@@ -807,15 +807,15 @@ service:
 	// liveness
 	assert.Equal(t, "/", c.LivenessProbe.HTTPGet.Path)
 	assert.Equal(t, int32(13133), c.LivenessProbe.HTTPGet.Port.IntVal)
-	assert.Equal(t, "", c.LivenessProbe.HTTPGet.Host)
+	assert.Empty(t, c.LivenessProbe.HTTPGet.Host)
 	// readiness
 	assert.Equal(t, "/", c.ReadinessProbe.HTTPGet.Path)
 	assert.Equal(t, int32(13133), c.ReadinessProbe.HTTPGet.Port.IntVal)
-	assert.Equal(t, "", c.ReadinessProbe.HTTPGet.Host)
+	assert.Empty(t, c.ReadinessProbe.HTTPGet.Host)
 	// startup
 	assert.Equal(t, "/", c.StartupProbe.HTTPGet.Path)
 	assert.Equal(t, int32(13133), c.StartupProbe.HTTPGet.Port.IntVal)
-	assert.Equal(t, "", c.StartupProbe.HTTPGet.Host)
+	assert.Empty(t, c.StartupProbe.HTTPGet.Host)
 }
 
 func TestContainerProbeNoConfig(t *testing.T) {
@@ -836,7 +836,7 @@ service:
 	// verify
 	assert.Equal(t, "/", c.LivenessProbe.HTTPGet.Path)
 	assert.Equal(t, int32(13133), c.LivenessProbe.HTTPGet.Port.IntVal)
-	assert.Equal(t, "", c.LivenessProbe.HTTPGet.Host)
+	assert.Empty(t, c.LivenessProbe.HTTPGet.Host)
 }
 
 func TestContainerLifecycle(t *testing.T) {

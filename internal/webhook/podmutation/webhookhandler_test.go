@@ -165,7 +165,7 @@ func TestShouldInjectSidecar(t *testing.T) {
 				expectedMap[patch.Path] = true
 			}
 			for k := range expectedMap {
-				assert.True(t, expectedMap[k], "patch with path %s not found", k)
+				assert.Truef(t, expectedMap[k], "patch with path %s not found", k)
 			}
 
 			// cleanup
@@ -367,7 +367,7 @@ func TestPodShouldNotBeChanged(t *testing.T) {
 			// verify
 			assert.True(t, res.Allowed)
 			assert.Nil(t, res.AdmissionResponse.Result)
-			assert.Len(t, res.Patches, 0)
+			assert.Empty(t, res.Patches)
 
 			// cleanup
 			for i := range tt.otelcols {

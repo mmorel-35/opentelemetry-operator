@@ -50,7 +50,7 @@ func TestRemoveMetricsTypeFlags(t *testing.T) {
 		Recorder: record.NewFakeRecorder(upgrade.RecordBufferSize),
 	}
 	res, err := up.ManagedInstance(context.Background(), convertTov1beta1(t, existing))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// verify
 	assert.NotContains(t, res.Spec.Args, "--new-metrics")

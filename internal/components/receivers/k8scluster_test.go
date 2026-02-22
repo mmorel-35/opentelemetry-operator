@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	rbacv1 "k8s.io/api/rbac/v1"
 )
 
@@ -143,10 +144,10 @@ func Test_generatek8sclusterRbacRules(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := generatek8sclusterRbacRules(logr.Discard(), tt.cfg)
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 				return
 			}
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.want, got)
 		})
 	}

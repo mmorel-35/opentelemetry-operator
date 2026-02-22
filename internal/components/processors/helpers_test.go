@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/open-telemetry/opentelemetry-operator/internal/components"
@@ -24,8 +25,8 @@ func TestParserForReturns(t *testing.T) {
 	ports, err := parser.Ports(logr.Discard(), testComponentName, map[string]any{
 		"endpoint": "localhost:9000",
 	})
-	assert.NoError(t, err)
-	assert.Len(t, ports, 0) // Should use the nop parser
+	require.NoError(t, err)
+	assert.Empty(t, ports) // Should use the nop parser
 }
 
 func TestCanRegister(t *testing.T) {
@@ -36,9 +37,9 @@ func TestCanRegister(t *testing.T) {
 	assert.Equal(t, "test", parser.ParserType())
 	assert.Equal(t, "__test", parser.ParserName())
 	ports, err := parser.Ports(logr.Discard(), testComponentName, map[string]any{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, ports, 1)
-	assert.Equal(t, ports[0].Port, int32(9000))
+	assert.Equal(t, int32(9000), ports[0].Port)
 }
 
 func TestDownstreamParsers(t *testing.T) {
@@ -66,7 +67,7 @@ func TestDownstreamParsers(t *testing.T) {
 				_, err := parser.Ports(logger, tt.processorName, func() {})
 
 				// verify
-				assert.Nil(t, err)
+				require.NoError(t, err)
 			})
 
 		})

@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	authv1 "k8s.io/api/authorization/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -165,7 +166,7 @@ func TestTargetAllocatorDefaultingWebhook(t *testing.T) {
 			}
 			ctx := context.Background()
 			err := webhook.Default(ctx, &test.targetallocator)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, test.expected, test.targetallocator)
 		})
 	}
@@ -336,11 +337,11 @@ func TestTargetAllocatorValidatingWebhook(t *testing.T) {
 			ctx := context.Background()
 			warnings, err := cvw.ValidateCreate(ctx, &test.targetallocator)
 			if test.expectedErr == "" {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
-				assert.ErrorContains(t, err, test.expectedErr)
+				require.ErrorContains(t, err, test.expectedErr)
 			}
-			assert.Equal(t, len(test.expectedWarnings), len(warnings))
+			assert.Len(t, warnings, len(test.expectedWarnings))
 			assert.ElementsMatch(t, warnings, test.expectedWarnings)
 		})
 	}

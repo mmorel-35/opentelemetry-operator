@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/open-telemetry/opentelemetry-operator/apis/v1alpha1"
@@ -119,7 +120,7 @@ headers:
 			}
 
 			actual, err := ConfigMap(params)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, "my-instance-opamp-bridge", actual.Name)
 			assert.Equal(t, tc.expectedLabels(), actual.Labels)

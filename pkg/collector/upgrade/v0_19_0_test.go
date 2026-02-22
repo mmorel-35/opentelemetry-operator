@@ -67,7 +67,7 @@ service:
 		Recorder: record.NewFakeRecorder(upgrade.RecordBufferSize),
 	}
 	resV1beta1, err := up.ManagedInstance(context.Background(), convertTov1beta1(t, existing))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	res := convertTov1alpha1(t, resV1beta1)
 
 	// verify
@@ -117,7 +117,7 @@ service:
 		Recorder: record.NewFakeRecorder(upgrade.RecordBufferSize),
 	}
 	resV1beta1, err := up.ManagedInstance(context.Background(), convertTov1beta1(t, existing))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	res := convertTov1alpha1(t, resV1beta1)
 
 	// verify
@@ -184,7 +184,7 @@ service:
 		Recorder: record.NewFakeRecorder(upgrade.RecordBufferSize),
 	}
 	resV1beta1, err := up.ManagedInstance(context.Background(), convertTov1beta1(t, existing))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	res := convertTov1alpha1(t, resV1beta1)
 
 	actual, err := adapters.ConfigFromString(res.Spec.Config)

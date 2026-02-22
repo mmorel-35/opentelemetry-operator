@@ -332,7 +332,7 @@ func TestUpgrade0_122_0(t *testing.T) {
 				if ok {
 					address, ok := metrics["address"].(string)
 					if ok && address != "" {
-						assert.Equal(t, "", address, "address field should be set to empty string")
+						assert.Emptyf(t, address, "address field should be set to empty string")
 					}
 				}
 			}

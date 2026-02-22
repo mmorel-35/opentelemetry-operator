@@ -15,7 +15,7 @@ func TestDesiredClusterRoles(t *testing.T) {
 
 	// No Cluster Roles
 	params, err := newParams("", "testdata/prometheus-exporter.yaml", nil)
-	assert.NoError(t, err, "No")
+	require.NoErrorf(t, err, "No")
 
 	cr, err := ClusterRole(params)
 	require.NoError(t, err)
@@ -100,11 +100,11 @@ func TestDesiredClusterRoles(t *testing.T) {
 
 	for _, test := range tests {
 		params, err := newParams("", test.configPath, nil)
-		assert.NoError(t, err, test.desc)
+		require.NoErrorf(t, err, test.desc)
 
 		cr, err := ClusterRole(params)
 		require.NoError(t, err)
-		assert.Equal(t, test.expectedRules, cr.Rules, test.desc)
+		assert.Equalf(t, test.expectedRules, cr.Rules, test.desc)
 	}
 }
 
@@ -112,7 +112,7 @@ func TestDesiredClusterRolBinding(t *testing.T) {
 
 	// No ClusterRoleBinding
 	params, err := newParams("", "testdata/prometheus-exporter.yaml", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	crb, err := ClusterRoleBinding(params)
 	require.NoError(t, err)
@@ -120,7 +120,7 @@ func TestDesiredClusterRolBinding(t *testing.T) {
 
 	// Create ClusterRoleBinding
 	params, err = newParams("", "testdata/rbac_resourcedetectionprocessor_k8s.yaml", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	crb, err = ClusterRoleBinding(params)
 	require.NoError(t, err)

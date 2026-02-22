@@ -17,7 +17,6 @@ import (
 
 	routev1 "github.com/openshift/api/route/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	v1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
@@ -329,7 +328,7 @@ func testCollectorWithModeAndReplicas(t *testing.T, name string, mode v1beta1.Mo
 
 func testCollectorAssertNoErr(t *testing.T, name string, taContainerImage string, file string) v1beta1.OpenTelemetryCollector {
 	p, err := testCollectorWithConfigFile(name, taContainerImage, file)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	if len(taContainerImage) == 0 {
 		p.Spec.TargetAllocator.Enabled = false
 	}

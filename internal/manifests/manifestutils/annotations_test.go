@@ -63,13 +63,13 @@ func TestNonDefaultPodAnnotation(t *testing.T) {
 	require.NoError(t, err)
 
 	//verify
-	assert.NotContains(t, annotations, "prometheus.io/scrape", "Prometheus scrape annotation should not exist")
-	assert.NotContains(t, annotations, "prometheus.io/port", "Prometheus port annotation should not exist")
-	assert.NotContains(t, annotations, "prometheus.io/path", "Prometheus path annotation should not exist")
+	assert.NotContainsf(t, annotations, "prometheus.io/scrape", "Prometheus scrape annotation should not exist")
+	assert.NotContainsf(t, annotations, "prometheus.io/port", "Prometheus port annotation should not exist")
+	assert.NotContainsf(t, annotations, "prometheus.io/path", "Prometheus path annotation should not exist")
 	//verify propagation from metadata.annotations to spec.template.spec.metadata.annotations
-	assert.NotContains(t, podAnnotations, "prometheus.io/scrape", "Prometheus scrape annotation should not exist in pod annotations")
-	assert.NotContains(t, podAnnotations, "prometheus.io/port", "Prometheus port annotation should not exist in pod annotations")
-	assert.NotContains(t, podAnnotations, "prometheus.io/path", "Prometheus path annotation should not exist in pod annotations")
+	assert.NotContainsf(t, podAnnotations, "prometheus.io/scrape", "Prometheus scrape annotation should not exist in pod annotations")
+	assert.NotContainsf(t, podAnnotations, "prometheus.io/port", "Prometheus port annotation should not exist in pod annotations")
+	assert.NotContainsf(t, podAnnotations, "prometheus.io/path", "Prometheus path annotation should not exist in pod annotations")
 	assert.Equal(t, "fbcdae6a02b2115cd5ca4f34298202ab041d1dfe62edebfaadb48b1ee178231d", podAnnotations["opentelemetry-operator-config/sha256"])
 }
 

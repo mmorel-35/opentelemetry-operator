@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/open-telemetry/opentelemetry-operator/internal/components/receivers"
 )
@@ -65,8 +66,8 @@ func TestScraperParsers(t *testing.T) {
 				ports, err := parser.Ports(logger, tt.receiverName, map[string]any{})
 
 				// verify
-				assert.NoError(t, err)
-				assert.Len(t, ports, 0)
+				require.NoError(t, err)
+				assert.Empty(t, ports)
 			})
 
 			t.Run("always returns nothing", func(t *testing.T) {
@@ -79,8 +80,8 @@ func TestScraperParsers(t *testing.T) {
 				})
 
 				// verify
-				assert.NoError(t, err)
-				assert.Len(t, ports, 0)
+				require.NoError(t, err)
+				assert.Empty(t, ports)
 			})
 		})
 	}

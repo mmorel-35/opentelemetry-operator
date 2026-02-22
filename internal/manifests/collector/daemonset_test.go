@@ -96,7 +96,7 @@ func TestDaemonsetHostNetwork(t *testing.T) {
 	d1, err := DaemonSet(params1)
 	require.NoError(t, err)
 	assert.False(t, d1.Spec.Template.Spec.HostNetwork)
-	assert.Equal(t, d1.Spec.Template.Spec.DNSPolicy, v1.DNSClusterFirst)
+	assert.Equal(t, v1.DNSClusterFirst, d1.Spec.Template.Spec.DNSPolicy)
 
 	// verify custom
 	params2 := manifests.Params{
@@ -117,7 +117,7 @@ func TestDaemonsetHostNetwork(t *testing.T) {
 	d2, err := DaemonSet(params2)
 	require.NoError(t, err)
 	assert.True(t, d2.Spec.Template.Spec.HostNetwork)
-	assert.Equal(t, d2.Spec.Template.Spec.DNSPolicy, v1.DNSClusterFirstWithHostNet)
+	assert.Equal(t, v1.DNSClusterFirstWithHostNet, d2.Spec.Template.Spec.DNSPolicy)
 }
 
 func TestDaemonsetDNSPolicy(t *testing.T) {
@@ -135,7 +135,7 @@ func TestDaemonsetDNSPolicy(t *testing.T) {
 	// test default
 	d1, err := DaemonSet(params1)
 	require.NoError(t, err)
-	assert.Equal(t, d1.Spec.Template.Spec.DNSPolicy, v1.DNSClusterFirst)
+	assert.Equal(t, v1.DNSClusterFirst, d1.Spec.Template.Spec.DNSPolicy)
 
 	// verify custom DNSPolicy
 	dnsPolicy := v1.DNSDefault
@@ -156,7 +156,7 @@ func TestDaemonsetDNSPolicy(t *testing.T) {
 	}
 	d2, err := DaemonSet(params2)
 	require.NoError(t, err)
-	assert.Equal(t, d2.Spec.Template.Spec.DNSPolicy, v1.DNSDefault)
+	assert.Equal(t, v1.DNSDefault, d2.Spec.Template.Spec.DNSPolicy)
 }
 
 func TestDaemonsetPodAnnotations(t *testing.T) {
@@ -297,7 +297,7 @@ func TestDaemonsetFilterAnnotations(t *testing.T) {
 	d, err := DaemonSet(params)
 	require.NoError(t, err)
 
-	assert.Len(t, d.ObjectMeta.Annotations, 0)
+	assert.Empty(t, d.ObjectMeta.Annotations)
 	for k := range excludedAnnotations {
 		assert.NotContains(t, d.ObjectMeta.Annotations, k)
 	}
@@ -349,7 +349,7 @@ func TestDaemonSetNodeSelector(t *testing.T) {
 
 	d2, err := DaemonSet(params2)
 	require.NoError(t, err)
-	assert.Equal(t, d2.Spec.Template.Spec.NodeSelector, map[string]string{"node-key": "node-value"})
+	assert.Equal(t, map[string]string{"node-key": "node-value"}, d2.Spec.Template.Spec.NodeSelector)
 }
 
 func TestDaemonSetPriorityClassName(t *testing.T) {
@@ -649,7 +649,7 @@ func TestDaemonSetDNSConfig(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "my-instance-collector", d.Name)
 	assert.Equal(t, v1.DNSPolicy("None"), d.Spec.Template.Spec.DNSPolicy)
-	assert.Equal(t, d.Spec.Template.Spec.DNSConfig.Nameservers, []string{"8.8.8.8"})
+	assert.Equal(t, []string{"8.8.8.8"}, d.Spec.Template.Spec.DNSConfig.Nameservers)
 }
 
 func TestDaemonSetTerminationGracePeriodSeconds(t *testing.T) {

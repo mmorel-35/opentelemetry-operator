@@ -23,10 +23,10 @@ func TestConfigLoadPriority(t *testing.T) {
 		}
 		cfg, err := Load(GetLogger(), args)
 
-		assert.NoError(t, err)
-		assert.Equal(t, defaultServerListenAddr, cfg.ListenAddr, "use default value")
-		assert.Equal(t, defaultHeartbeatInterval, cfg.HeartbeatInterval, "use default value")
-		assert.Equal(t, opampBridgeName, cfg.Name, "use default value")
+		require.NoError(t, err)
+		assert.Equalf(t, defaultServerListenAddr, cfg.ListenAddr, "use default value")
+		assert.Equalf(t, defaultHeartbeatInterval, cfg.HeartbeatInterval, "use default value")
+		assert.Equalf(t, opampBridgeName, cfg.Name, "use default value")
 	})
 	t.Run("command-line has priority over config file for time.Duration values", func(t *testing.T) {
 		args := []string{
@@ -36,10 +36,10 @@ func TestConfigLoadPriority(t *testing.T) {
 		}
 		cfg, err := Load(GetLogger(), args)
 
-		assert.NoError(t, err)
-		assert.Equal(t, defaultServerListenAddr, cfg.ListenAddr, "use default value")
-		assert.Equal(t, 10*time.Second, cfg.HeartbeatInterval, "command-line priority is higher than config, overwrite time.Duration value")
-		assert.Equal(t, "http-test-bridge", cfg.Name, "config file priority is higher than default string value")
+		require.NoError(t, err)
+		assert.Equalf(t, defaultServerListenAddr, cfg.ListenAddr, "use default value")
+		assert.Equalf(t, 10*time.Second, cfg.HeartbeatInterval, "command-line priority is higher than config, overwrite time.Duration value")
+		assert.Equalf(t, "http-test-bridge", cfg.Name, "config file priority is higher than default string value")
 	})
 
 	t.Run("command-line has priority over config file for string values", func(t *testing.T) {
@@ -51,10 +51,10 @@ func TestConfigLoadPriority(t *testing.T) {
 		}
 		cfg, err := Load(GetLogger(), args)
 
-		assert.NoError(t, err)
-		assert.Equal(t, defaultServerListenAddr, cfg.ListenAddr, "use default value")
-		assert.Equal(t, 45*time.Second, cfg.HeartbeatInterval, "config file priority is higher than default time.Duration value")
-		assert.Equal(t, testOpAMPBridgeName, cfg.Name, "command-line priority is higher than config, overwrite string value")
+		require.NoError(t, err)
+		assert.Equalf(t, defaultServerListenAddr, cfg.ListenAddr, "use default value")
+		assert.Equalf(t, 45*time.Second, cfg.HeartbeatInterval, "config file priority is higher than default time.Duration value")
+		assert.Equalf(t, testOpAMPBridgeName, cfg.Name, "command-line priority is higher than config, overwrite string value")
 	})
 }
 
@@ -295,7 +295,7 @@ func TestGetDescription(t *testing.T) {
 	instanceId := uuid.New()
 	got.instanceId = instanceId
 	err := LoadFromFile(got, "./testdata/agentwithdescription.yaml")
-	require.NoError(t, err, fmt.Sprintf("Load(%v)", "./testdata/agentwithdescription.yaml"))
+	require.NoErrorf(t, err, "Load(%v)", "./testdata/agentwithdescription.yaml")
 	desc := got.GetDescription()
 	assert.Len(t, desc.IdentifyingAttributes, 3)
 	assert.Contains(t, desc.IdentifyingAttributes, &protobufs.KeyValue{Key: "service.instance.id", Value: &protobufs.AnyValue{
@@ -312,7 +312,7 @@ func TestGetDescriptionNoneSet(t *testing.T) {
 	instanceId := uuid.New()
 	got.instanceId = instanceId
 	err := LoadFromFile(got, "./testdata/agent.yaml")
-	require.NoError(t, err, fmt.Sprintf("Load(%v)", "./testdata/agent.yaml"))
+	require.NoErrorf(t, err, "Load(%v)", "./testdata/agent.yaml")
 	desc := got.GetDescription()
 	assert.Len(t, desc.IdentifyingAttributes, 3)
 	assert.Contains(t, desc.IdentifyingAttributes, &protobufs.KeyValue{Key: "service.instance.id", Value: &protobufs.AnyValue{

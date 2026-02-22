@@ -32,7 +32,7 @@ func TestTemplateFuncs(t *testing.T) {
 		Index: 32,
 	}
 	require.NoError(t, tmpl.Execute(buf, input))
-	assert.EqualValues(t, want, buf.String())
+	assert.Equal(t, want, buf.String())
 }
 
 func TestNoCrash(t *testing.T) {

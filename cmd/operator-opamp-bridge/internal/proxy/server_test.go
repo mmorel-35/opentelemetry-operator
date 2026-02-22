@@ -21,10 +21,10 @@ func TestOpAMPProxy_StartStop(t *testing.T) {
 	proxyServer := NewOpAMPProxy(logger, endpoint)
 
 	err := proxyServer.Start()
-	require.NoError(t, err, "should be able to start the server")
+	require.NoErrorf(t, err, "should be able to start the server")
 
 	err = proxyServer.Stop(context.Background())
-	require.NoError(t, err, "should be able to stop the server")
+	require.NoErrorf(t, err, "should be able to stop the server")
 }
 
 func TestOpAMPProxy_OnMessage(t *testing.T) {
@@ -39,7 +39,7 @@ func TestOpAMPProxy_OnMessage(t *testing.T) {
 	}
 
 	response := proxyServer.onMessage(context.Background(), conn, msg)
-	require.NotNil(t, response, "response should not be nil")
+	require.NotNilf(t, response, "response should not be nil")
 }
 
 func TestOpAMPProxy_OnDisconnect(t *testing.T) {
@@ -54,9 +54,9 @@ func TestOpAMPProxy_OnDisconnect(t *testing.T) {
 
 	proxyServer.onDisconnect(conn)
 
-	assert.Empty(t, proxyServer.agentsById, "agentsById should be empty")
-	assert.Empty(t, proxyServer.connections, "connections should be empty")
-	assert.Empty(t, proxyServer.agentsByHostName, "agentsByHostName should be empty")
+	assert.Emptyf(t, proxyServer.agentsById, "agentsById should be empty")
+	assert.Emptyf(t, proxyServer.connections, "connections should be empty")
+	assert.Emptyf(t, proxyServer.agentsByHostName, "agentsByHostName should be empty")
 }
 
 func TestOpAMPProxy_GetConfigurations(t *testing.T) {
@@ -70,8 +70,8 @@ func TestOpAMPProxy_GetConfigurations(t *testing.T) {
 	proxyServer.agentsById[instanceId] = agent
 
 	configs := proxyServer.GetConfigurations()
-	require.NotNil(t, configs, "configs should not be nil")
-	assert.Contains(t, configs, instanceId, "configs should contain the instance ID")
+	require.NotNilf(t, configs, "configs should not be nil")
+	assert.Containsf(t, configs, instanceId, "configs should contain the instance ID")
 }
 
 func TestOpAMPProxy_GetHealth(t *testing.T) {
@@ -85,8 +85,8 @@ func TestOpAMPProxy_GetHealth(t *testing.T) {
 	proxyServer.agentsById[instanceId] = agent
 
 	healths := proxyServer.GetHealth()
-	require.NotNil(t, healths, "healths should not be nil")
-	assert.Contains(t, healths, instanceId, "healths should contain the instance ID")
+	require.NotNilf(t, healths, "healths should not be nil")
+	assert.Containsf(t, healths, instanceId, "healths should contain the instance ID")
 }
 
 func TestOpAMPProxy_GetAgentsByHostname(t *testing.T) {
@@ -98,9 +98,9 @@ func TestOpAMPProxy_GetAgentsByHostname(t *testing.T) {
 	proxyServer.agentsByHostName["example"] = instanceId
 
 	byHostname := proxyServer.GetAgentsByHostname()
-	require.NotNil(t, byHostname, "byHostname should not be nil")
+	require.NotNilf(t, byHostname, "byHostname should not be nil")
 	id, ok := byHostname["example"]
-	assert.True(t, ok, "map should contain example key")
+	assert.Truef(t, ok, "map should contain example key")
 	assert.Equal(t, instanceId, id)
 }
 

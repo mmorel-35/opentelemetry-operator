@@ -192,7 +192,7 @@ service:
         - otlp
 `
 
-	assert.Equal(t, expected, yamlCollector)
+	assert.YAMLEq(t, expected, yamlCollector)
 }
 
 func TestGetTelemetryFromYAML(t *testing.T) {
@@ -543,9 +543,9 @@ func TestConfigMetricsEndpoint(t *testing.T) {
 			// these are acceptable failures, we return to the collector's default metric port
 			addr, port, err := tt.config.MetricsEndpoint(logr.Discard())
 			if tt.expectedErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 			assert.Equal(t, tt.expectedAddr, addr)
 			assert.Equal(t, tt.expectedPort, port)
@@ -725,7 +725,7 @@ func TestConfig_getEnvironmentVariablesForComponentKinds(t *testing.T) {
 			logger := logr.Discard()
 			envVars, err := tt.config.GetEnvironmentVariables(logger)
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Len(t, envVars, tt.envVarsLen)
 		})
 	}

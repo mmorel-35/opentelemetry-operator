@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
@@ -56,7 +57,7 @@ service:
 		Recorder: record.NewFakeRecorder(upgrade.RecordBufferSize),
 	}
 	resV1beta1, err := up.ManagedInstance(context.Background(), convertTov1beta1(t, existing))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	res := convertTov1alpha1(t, resV1beta1)
 
 	// verify

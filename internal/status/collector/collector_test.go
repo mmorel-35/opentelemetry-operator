@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -32,10 +33,10 @@ func TestUpdateCollectorStatusUnsupported(t *testing.T) {
 	}
 
 	err := updateCollectorStatus(ctx, cli, changed)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
-	assert.Equal(t, int32(0), changed.Status.Scale.Replicas, "expected replicas to be 0")
-	assert.Equal(t, "", changed.Status.Scale.Selector, "expected selector to be empty")
+	assert.Equalf(t, int32(0), changed.Status.Scale.Replicas, "expected replicas to be 0")
+	assert.Emptyf(t, changed.Status.Scale.Selector, "expected selector to be empty")
 }
 
 func createMockKubernetesClientDeployment() client.Client {
@@ -79,11 +80,11 @@ func TestUpdateCollectorStatusDeploymentMode(t *testing.T) {
 	}
 
 	err := updateCollectorStatus(ctx, cli, changed)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
-	assert.Equal(t, int32(1), changed.Status.Scale.Replicas, "expected replicas to be 1")
-	assert.Equal(t, "1/1", changed.Status.Scale.StatusReplicas, "expected status replicas to be 1/1")
-	assert.Equal(t, "app:latest", changed.Status.Image, "expected image to be app:latest")
+	assert.Equalf(t, int32(1), changed.Status.Scale.Replicas, "expected replicas to be 1")
+	assert.Equalf(t, "1/1", changed.Status.Scale.StatusReplicas, "expected status replicas to be 1/1")
+	assert.Equalf(t, "app:latest", changed.Status.Image, "expected image to be app:latest")
 }
 
 func createMockKubernetesClientStatefulset() client.Client {
@@ -127,11 +128,11 @@ func TestUpdateCollectorStatusStatefulset(t *testing.T) {
 	}
 
 	err := updateCollectorStatus(ctx, cli, changed)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
-	assert.Equal(t, int32(1), changed.Status.Scale.Replicas, "expected replicas to be 1")
-	assert.Equal(t, "1/1", changed.Status.Scale.StatusReplicas, "expected status replicas to be 1/1")
-	assert.Equal(t, "app:latest", changed.Status.Image, "expected image to be app:latest")
+	assert.Equalf(t, int32(1), changed.Status.Scale.Replicas, "expected replicas to be 1")
+	assert.Equalf(t, "1/1", changed.Status.Scale.StatusReplicas, "expected status replicas to be 1/1")
+	assert.Equalf(t, "app:latest", changed.Status.Image, "expected image to be app:latest")
 }
 
 func createMockKubernetesClientDaemonset() client.Client {
@@ -178,10 +179,10 @@ func TestUpdateCollectorStatusDaemonsetMode(t *testing.T) {
 	}
 
 	err := updateCollectorStatus(ctx, cli, changed)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
-	assert.Equal(t, int32(1), changed.Status.Scale.Replicas, "expected replicas to be 1")
-	assert.Equal(t, "1/1", changed.Status.Scale.StatusReplicas, "expected status replicas to be 1/1")
-	assert.Contains(t, changed.Status.Scale.Selector, "customLabel=customValue", "expected selector to contain customlabel=customValue")
-	assert.Equal(t, "app:latest", changed.Status.Image, "expected image to be app:latest")
+	assert.Equalf(t, int32(1), changed.Status.Scale.Replicas, "expected replicas to be 1")
+	assert.Equalf(t, "1/1", changed.Status.Scale.StatusReplicas, "expected status replicas to be 1/1")
+	assert.Containsf(t, changed.Status.Scale.Selector, "customLabel=customValue", "expected selector to contain customlabel=customValue")
+	assert.Equalf(t, "app:latest", changed.Status.Image, "expected image to be app:latest")
 }

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/open-telemetry/opentelemetry-operator/internal/components"
 )
@@ -45,12 +46,12 @@ func TestReceiverParsePortFromEndpoint(t *testing.T) {
 			// test
 			val, err := components.PortFromEndpoint(tt.endpoint)
 			if tt.errorExpected {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 
-			assert.EqualValues(t, tt.expected, val, "wrong port from endpoint %s: %d", tt.endpoint, val)
+			assert.EqualValuesf(t, tt.expected, val, "wrong port from endpoint %s: %d", tt.endpoint, val)
 		})
 	}
 }

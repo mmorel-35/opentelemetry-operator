@@ -42,7 +42,7 @@ func getFakeClient(t *testing.T, lists ...client.ObjectList) client.WithWatch {
 	})
 	scheme := runtime.NewScheme()
 	err := schemeBuilder.AddToScheme(scheme)
-	require.NoError(t, err, "Should be able to add custom types")
+	require.NoErrorf(t, err, "Should be able to add custom types")
 	c := fake.NewClientBuilder().WithLists(lists...).WithScheme(scheme)
 	return c.Build()
 }
@@ -128,7 +128,7 @@ func TestClient_Apply(t *testing.T) {
 			var err error
 			if len(tt.args.file) > 0 {
 				colConfig, err = loadConfig(tt.args.file)
-				require.NoError(t, err, "Should be no error on loading test configuration")
+				require.NoErrorf(t, err, "Should be no error on loading test configuration")
 			} else {
 				colConfig = []byte(tt.args.config)
 			}
@@ -138,8 +138,8 @@ func TestClient_Apply(t *testing.T) {
 			}
 			applyErr := c.Apply(tt.args.name, tt.args.namespace, configmap)
 			if tt.wantErr {
-				assert.Error(t, applyErr)
-				assert.ErrorContains(t, applyErr, tt.errContains)
+				require.Error(t, applyErr)
+				require.ErrorContains(t, applyErr, tt.errContains)
 			}
 		})
 	}
@@ -153,78 +153,78 @@ func TestClient_ApplyUpdate(t *testing.T) {
 
 	// Load reporting-only collector
 	reportingColConfig, err := loadConfig("testdata/reporting-collector.yaml")
-	require.NoError(t, err, "Should be no error on loading test configuration")
+	require.NoErrorf(t, err, "Should be no error on loading test configuration")
 
 	var reportingCol v1beta1.OpenTelemetryCollector
 	err = yaml.Unmarshal(reportingColConfig, &reportingCol)
-	require.NoError(t, err, "Should be no error on unmarshal")
+	require.NoErrorf(t, err, "Should be no error on unmarshal")
 
 	setTypedMeta(&reportingCol)
 	reportingCol.ObjectMeta.Name = "simplest"
 	reportingCol.ObjectMeta.Namespace = namespace
 
 	err = fakeClient.Create(context.Background(), &reportingCol)
-	require.NoError(t, err, "Should be able to make reporting col")
+	require.NoErrorf(t, err, "Should be able to make reporting col")
 	setTypedMeta(&reportingCol) // calling client.Create() can unset this
 
 	allInstances, err := c.ListInstances()
-	require.NoError(t, err, "Should be able to list all collectors")
+	require.NoErrorf(t, err, "Should be able to list all collectors")
 	require.Len(t, allInstances, 1)
 
 	// Create managed collector
 	colConfig, err := loadConfig("testdata/collector.yaml")
-	require.NoError(t, err, "Should be no error on loading test configuration")
+	require.NoErrorf(t, err, "Should be no error on loading test configuration")
 	configmap := &protobufs.AgentConfigFile{
 		Body:        colConfig,
 		ContentType: "yaml",
 	}
 	// Apply a valid initial configuration
 	err = c.Apply(name, namespace, configmap)
-	require.NoError(t, err, "Should apply base config")
+	require.NoErrorf(t, err, "Should apply base config")
 
 	// Confirm there are now two collector instances, reporting and managed
 	allInstances, err = c.ListInstances()
-	require.NoError(t, err, "Should be able to list all collectors")
-	require.Len(t, allInstances, 2, "Should be two collector instances")
+	require.NoErrorf(t, err, "Should be able to list all collectors")
+	require.Lenf(t, allInstances, 2, "Should be two collector instances")
 
 	// Get the newly created collector instance
 	instance, err := c.GetInstance(name, namespace)
-	require.NoError(t, err, "Should be able to get the newly created instance")
+	require.NoErrorf(t, err, "Should be able to get the newly created instance")
 
-	require.NotNil(t, instance, "Should be able to get the newly created instance")
-	require.Len(t, instance.Spec.Config.Service.Pipelines, 1, "Should have a single pipeline")
-	require.Contains(t, instance.Spec.Config.Service.Pipelines, "traces", "Should have a traces pipeline")
+	require.NotNilf(t, instance, "Should be able to get the newly created instance")
+	require.Lenf(t, instance.Spec.Config.Service.Pipelines, 1, "Should have a single pipeline")
+	require.Containsf(t, instance.Spec.Config.Service.Pipelines, "traces", "Should have a traces pipeline")
 	originalTracesPipeline := instance.Spec.Config.Service.Pipelines["traces"]
-	require.NotNil(t, originalTracesPipeline, "Should have a traces pipeline")
-	require.Empty(t, originalTracesPipeline.Processors, "Should have the no processors configured for the traces pipeline")
+	require.NotNilf(t, originalTracesPipeline, "Should have a traces pipeline")
+	require.Emptyf(t, originalTracesPipeline.Processors, "Should have the no processors configured for the traces pipeline")
 
 	// Try updating with an invalid configuration
 	configmap.Body = []byte("empty, invalid!")
 	err = c.Apply(name, namespace, configmap)
-	assert.Error(t, err, "Should be unable to update with invalid config")
+	require.Errorf(t, err, "Should be unable to update with invalid config")
 
 	// Update successfully with a valid configuration
 	newColConfig, err := loadConfig("testdata/updated-collector.yaml")
-	require.NoError(t, err, "Should be no error on loading test configuration")
+	require.NoErrorf(t, err, "Should be no error on loading test configuration")
 	newConfigMap := &protobufs.AgentConfigFile{
 		Body:        newColConfig,
 		ContentType: "yaml",
 	}
 	err = c.Apply(name, namespace, newConfigMap)
-	require.NoError(t, err, "Should be able to update collector")
+	require.NoErrorf(t, err, "Should be able to update collector")
 
 	// Get the updated collector
 	updatedInstance, err := c.GetInstance(name, namespace)
-	require.NoError(t, err, "Should be able to get the updated instance without error")
-	require.NotNil(t, updatedInstance, "Should be able to get the newly created instance")
-	require.Len(t, updatedInstance.Spec.Config.Service.Pipelines, 1, "Should have a single pipeline")
-	require.Contains(t, updatedInstance.Spec.Config.Service.Pipelines, "traces", "Should have a traces pipeline")
+	require.NoErrorf(t, err, "Should be able to get the updated instance without error")
+	require.NotNilf(t, updatedInstance, "Should be able to get the newly created instance")
+	require.Lenf(t, updatedInstance.Spec.Config.Service.Pipelines, 1, "Should have a single pipeline")
+	require.Containsf(t, updatedInstance.Spec.Config.Service.Pipelines, "traces", "Should have a traces pipeline")
 	newTracesPipeline := updatedInstance.Spec.Config.Service.Pipelines["traces"]
-	require.NotNil(t, newTracesPipeline, "Should have a traces pipeline")
-	require.Equal(t, []string{"memory_limiter", "batch"}, newTracesPipeline.Processors, "Should have the memory_limiter and batch processors")
+	require.NotNilf(t, newTracesPipeline, "Should have a traces pipeline")
+	require.Equalf(t, []string{"memory_limiter", "batch"}, newTracesPipeline.Processors, "Should have the memory_limiter and batch processors")
 
 	allInstances, err = c.ListInstances()
-	require.NoError(t, err, "Should be able to list all collectors")
+	require.NoErrorf(t, err, "Should be able to list all collectors")
 	assert.Len(t, allInstances, 2)
 	assert.Contains(t, allInstances, reportingCol)
 	assert.Contains(t, allInstances, *updatedInstance)
@@ -236,31 +236,31 @@ func TestClient_Delete(t *testing.T) {
 	fakeClient := getFakeClient(t)
 	c := NewClient(bridgeName, clientLogger, fakeClient, nil)
 	colConfig, err := loadConfig("testdata/collector.yaml")
-	require.NoError(t, err, "Should be no error on loading test configuration")
+	require.NoErrorf(t, err, "Should be no error on loading test configuration")
 	configmap := &protobufs.AgentConfigFile{
 		Body:        colConfig,
 		ContentType: "yaml",
 	}
 	// Apply a valid initial configuration
 	err = c.Apply(name, namespace, configmap)
-	require.NoError(t, err, "Should apply base config")
+	require.NoErrorf(t, err, "Should apply base config")
 
 	// Get the newly created collector
 	instance, err := c.GetInstance(name, namespace)
-	require.NoError(t, err, "Should be able to get the newly created instance without error")
-	require.NotNil(t, instance, "Should be able to get the newly created instance")
-	require.NotNil(t, instance.Spec.Config.Processors, "Should have processor")
-	require.Contains(t, instance.Spec.Config.Processors.Object, "batch", "Should have the batch processor")
-	require.Len(t, instance.Spec.Config.Service.Pipelines, 1, "Should have a pipeline")
+	require.NoErrorf(t, err, "Should be able to get the newly created instance without error")
+	require.NotNilf(t, instance, "Should be able to get the newly created instance")
+	require.NotNilf(t, instance.Spec.Config.Processors, "Should have processor")
+	require.Containsf(t, instance.Spec.Config.Processors.Object, "batch", "Should have the batch processor")
+	require.Lenf(t, instance.Spec.Config.Service.Pipelines, 1, "Should have a pipeline")
 
 	// Delete it
 	err = c.Delete(name, namespace)
-	require.NoError(t, err, "Should be able to delete a collector")
+	require.NoErrorf(t, err, "Should be able to delete a collector")
 
 	// Check there's nothing left
 	allInstances, err := c.ListInstances()
-	require.NoError(t, err, "Should be able to list all collectors")
-	require.Empty(t, allInstances, "Should be empty after deletion")
+	require.NoErrorf(t, err, "Should be able to list all collectors")
+	require.Emptyf(t, allInstances, "Should be empty after deletion")
 }
 
 func loadConfig(file string) ([]byte, error) {

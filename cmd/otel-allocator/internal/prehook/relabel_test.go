@@ -18,6 +18,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/model/relabel"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/open-telemetry/opentelemetry-operator/cmd/otel-allocator/internal/target"
@@ -247,7 +248,7 @@ func TestApply(t *testing.T) {
 	assert.NotNil(t, allocatorPrehook)
 
 	targets, numRemaining, expectedTargetMap, relabelCfg, err := makeNNewTargets(relabelConfigs, defaultNumTargets, defaultNumCollectors, defaultStartIndex)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	allocatorPrehook.SetConfig(relabelCfg)
 	remainingItems := allocatorPrehook.Apply(targets)
@@ -273,12 +274,12 @@ func TestApplyHashmodAction(t *testing.T) {
 
 	hashRelabelConfigs := append(relabelConfigs, HashmodConfig)
 	targets, numRemaining, expectedTargetMap, relabelCfg, err := makeNNewTargets(hashRelabelConfigs, defaultNumTargets, defaultNumCollectors, defaultStartIndex)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	allocatorPrehook.SetConfig(relabelCfg)
 	remainingItems := allocatorPrehook.Apply(targets)
 	assert.Len(t, remainingItems, numRemaining)
-	assert.Equal(t, remainingItems, expectedTargetMap)
+	assert.Equal(t, expectedTargetMap, remainingItems)
 }
 
 func TestApplyEmptyRelabelCfg(t *testing.T) {
@@ -287,7 +288,7 @@ func TestApplyEmptyRelabelCfg(t *testing.T) {
 	assert.NotNil(t, allocatorPrehook)
 
 	targets, _, _, _, err := makeNNewTargets(relabelConfigs, defaultNumTargets, defaultNumCollectors, defaultStartIndex)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	relabelCfg := map[string][]*relabel.Config{}
 	allocatorPrehook.SetConfig(relabelCfg)
@@ -302,7 +303,7 @@ func TestSetConfig(t *testing.T) {
 	assert.NotNil(t, allocatorPrehook)
 
 	_, _, _, relabelCfg, err := makeNNewTargets(relabelConfigs, defaultNumTargets, defaultNumCollectors, defaultStartIndex)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	allocatorPrehook.SetConfig(relabelCfg)
 
@@ -318,7 +319,7 @@ func TestDistinctTarget(t *testing.T) {
 	assert.NotNil(t, allocatorPrehook)
 
 	targets, _, expectedTarget, relabelCfg, err := makeNNewTargets(relabelConfigs, 10, defaultNumCollectors, defaultStartIndex)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	duplicatedTargets := make([]*target.Item, 0, 2*len(targets))
 	for _, item := range targets {
@@ -347,7 +348,7 @@ func TestDistinctTarget(t *testing.T) {
 	promTargetMap := make(map[target.ItemHash]*target.Item)
 	for _, item := range targets {
 		tfp, err := MakeTargetFromProm(relabelCfg[item.JobName], item)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		// If the target is dropped by Prometheus, it will be nil.
 		if tfp != nil {
 			promTargetMap[tfp.Hash()] = tfp
@@ -355,7 +356,7 @@ func TestDistinctTarget(t *testing.T) {
 	}
 
 	assert.Len(t, promTargetMap, len(expectedTargetMap))
-	assert.Equal(t, promTargetMap, expectedTargetMap)
+	assert.Equal(t, expectedTargetMap, promTargetMap)
 
 	// The deduplicated result after otel-allocator processing.
 	allocatorPrehook.SetConfig(relabelCfg)
@@ -366,7 +367,7 @@ func TestDistinctTarget(t *testing.T) {
 	}
 
 	assert.Len(t, remainingItemsMap, len(expectedTargetMap))
-	assert.Equal(t, remainingItemsMap, expectedTargetMap)
+	assert.Equal(t, expectedTargetMap, remainingItemsMap)
 }
 
 func MakeTargetFromProm(rCfgs []*relabel.Config, rawTarget *target.Item) (*target.Item, error) {

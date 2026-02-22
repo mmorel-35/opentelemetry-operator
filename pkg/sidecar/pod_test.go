@@ -72,7 +72,7 @@ func TestAddNativeSidecar(t *testing.T) {
 	changed, err := add(cfg, logger, otelcol, pod, nil)
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.Len(t, changed.Spec.Containers, 1)
 	require.Len(t, changed.Spec.InitContainers, 3)
 	require.Len(t, changed.Spec.Volumes, 2)
@@ -198,7 +198,7 @@ func TestAddSidecarWhenNoSidecarExists(t *testing.T) {
 	changed, err := add(cfg, logger, otelcol, pod, nil)
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.Len(t, changed.Spec.Containers, 2)
 	require.Len(t, changed.Spec.InitContainers, 2)
 	require.Len(t, changed.Spec.Volumes, 1)
@@ -271,7 +271,7 @@ func TestAddSidecarWhenOneExistsAlready(t *testing.T) {
 	changed, err := add(cfg, logger, otelcol, pod, nil)
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, changed.Spec.Containers, 3)
 }
 
@@ -391,7 +391,7 @@ func TestAddSidecarWithAditionalEnv(t *testing.T) {
 	})
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, changed.Spec.Containers, 2)
 	assert.Contains(t, changed.Spec.Containers[1].Env, extraEnv)
 

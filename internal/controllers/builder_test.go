@@ -1861,7 +1861,7 @@ service:
 			registry := colfeaturegate.GlobalRegistry()
 			for _, gate := range featuregates {
 				current := gate.IsEnabled()
-				require.False(t, current, "only enable gates which are disabled by default")
+				require.Falsef(t, current, "only enable gates which are disabled by default")
 				if setErr := registry.Set(gate.ID(), true); setErr != nil {
 					require.NoError(t, setErr)
 					return
@@ -3341,7 +3341,7 @@ prometheus_cr:
 			registry := colfeaturegate.GlobalRegistry()
 			for _, gate := range tt.featuregates {
 				current := gate.IsEnabled()
-				require.False(t, current, "only enable gates which are disabled by default")
+				require.Falsef(t, current, "only enable gates which are disabled by default")
 				if err := registry.Set(gate.ID(), true); err != nil {
 					require.NoError(t, err)
 					return

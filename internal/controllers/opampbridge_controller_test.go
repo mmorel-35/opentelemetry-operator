@@ -109,25 +109,25 @@ func TestNewObjectsOnReconciliation_OpAMPBridge(t *testing.T) {
 	{
 		list := &corev1.ConfigMapList{}
 		err = k8sClient.List(context.Background(), list, opts...)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, list.Items)
 	}
 	{
 		list := &corev1.ServiceAccountList{}
 		err = k8sClient.List(context.Background(), list, opts...)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, list.Items)
 	}
 	{
 		list := &corev1.ServiceList{}
 		err = k8sClient.List(context.Background(), list, opts...)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, list.Items)
 	}
 	{
 		list := &appsv1.DeploymentList{}
 		err = k8sClient.List(context.Background(), list, opts...)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotEmpty(t, list.Items)
 	}
 	// cleanup
@@ -152,7 +152,7 @@ func TestSkipWhenInstanceDoesNotExist_OpAMPBridge(t *testing.T) {
 	_, err := reconciler.Reconcile(context.Background(), req)
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestRegisterWithManager_OpAMPBridge(t *testing.T) {
@@ -168,5 +168,5 @@ func TestRegisterWithManager_OpAMPBridge(t *testing.T) {
 	err = reconciler.SetupWithManager(mgr)
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }

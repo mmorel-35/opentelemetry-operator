@@ -18,16 +18,16 @@ import (
 
 func TestPrometheusParser(t *testing.T) {
 	param, err := newParams("test/test-img", "testdata/http_sd_config_test.yaml", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	t.Run("should update config with targetAllocator block if block not present", func(t *testing.T) {
 		// Set up the test scenario
 		actualConfig, err := ReplaceConfig(param.OtelCol, param.TargetAllocator)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Verify the expected changes in the config
 		promCfgMap, err := ta.ConfigToPromConfig(actualConfig)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		prometheusConfig := promCfgMap["config"].(map[any]any)
 
@@ -39,7 +39,7 @@ func TestPrometheusParser(t *testing.T) {
 			"collector_id": "${POD_NAME}",
 		}
 		assert.Equal(t, expectedTAConfig, promCfgMap["target_allocator"])
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("should update config with targetAllocator block if block already present", func(t *testing.T) {
@@ -48,11 +48,11 @@ func TestPrometheusParser(t *testing.T) {
 		require.NoError(t, err)
 
 		actualConfig, err := ReplaceConfig(paramTa.OtelCol, param.TargetAllocator)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// Verify the expected changes in the config
 		promCfgMap, err := ta.ConfigToPromConfig(actualConfig)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		prometheusConfig := promCfgMap["config"].(map[any]any)
 
@@ -64,23 +64,23 @@ func TestPrometheusParser(t *testing.T) {
 			"collector_id": "${POD_NAME}",
 		}
 		assert.Equal(t, expectedTAConfig, promCfgMap["target_allocator"])
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("should not update config with http_sd_config", func(t *testing.T) {
 		actualConfig, err := ReplaceConfig(param.OtelCol, nil)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// prepare
 		var cfg Config
 		promCfgMap, err := ta.ConfigToPromConfig(actualConfig)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		promCfg, err := yaml.Marshal(promCfgMap)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		err = yaml.UnmarshalStrict(promCfg, &cfg)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		// test
 		expectedMap := map[string]bool{
@@ -89,29 +89,29 @@ func TestPrometheusParser(t *testing.T) {
 		}
 		for _, scrapeConfig := range cfg.PromConfig.ScrapeConfigs {
 			assert.Len(t, scrapeConfig.ServiceDiscoveryConfigs, 2)
-			assert.Equal(t, scrapeConfig.ServiceDiscoveryConfigs[0].Name(), "file")
-			assert.Equal(t, scrapeConfig.ServiceDiscoveryConfigs[1].Name(), "static")
+			assert.Equal(t, "file", scrapeConfig.ServiceDiscoveryConfigs[0].Name())
+			assert.Equal(t, "static", scrapeConfig.ServiceDiscoveryConfigs[1].Name())
 			expectedMap[scrapeConfig.JobName] = true
 		}
 		for k := range expectedMap {
-			assert.True(t, expectedMap[k], k)
+			assert.Truef(t, expectedMap[k], k)
 		}
-		assert.True(t, cfg.TargetAllocConfig == nil)
+		assert.Nil(t, cfg.TargetAllocConfig)
 	})
 
 }
 
 func TestReplaceConfig(t *testing.T) {
 	param, err := newParams("test/test-img", "testdata/relabel_config_original.yaml", nil)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	t.Run("should not modify config when TargetAllocator is disabled", func(t *testing.T) {
 		expectedConfigBytes, err := os.ReadFile("testdata/relabel_config_original.yaml")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		expectedConfig := string(expectedConfigBytes)
 
 		actualConfig, err := ReplaceConfig(param.OtelCol, nil)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.YAMLEq(t, expectedConfig, actualConfig)
 	})
@@ -119,11 +119,11 @@ func TestReplaceConfig(t *testing.T) {
 	t.Run("should remove scrape configs if TargetAllocator is enabled", func(t *testing.T) {
 
 		expectedConfigBytes, err := os.ReadFile("testdata/config_expected_targetallocator.yaml")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		expectedConfig := string(expectedConfigBytes)
 
 		actualConfig, err := ReplaceConfig(param.OtelCol, param.TargetAllocator)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.YAMLEq(t, expectedConfig, actualConfig)
 	})
@@ -134,10 +134,10 @@ func TestReplaceConfig(t *testing.T) {
 		param.OtelCol.Spec.TargetAllocator.CollectorTargetReloadInterval = customInterval
 
 		actualConfig, err := ReplaceConfig(param.OtelCol, param.TargetAllocator, ta.WithCollectorTargetReloadInterval(customInterval.Duration.String()))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		promCfgMap, err := ta.ConfigToPromConfig(actualConfig)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		assert.Equal(t, customInterval.Duration.String(), promCfgMap["target_allocator"].(map[any]any)["interval"])
 	})

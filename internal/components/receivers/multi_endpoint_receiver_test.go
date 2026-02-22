@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
@@ -399,7 +400,7 @@ func TestMultiEndpointReceiverParsers(t *testing.T) {
 				_, err := parser.Ports(logger, tt.receiverName, []any{"junk"})
 
 				// verify
-				assert.ErrorContains(t, err, "expected a map, got 'slice'")
+				require.ErrorContains(t, err, "expected a map, got 'slice'")
 			})
 			t.Run("good config, unknown protocol", func(t *testing.T) {
 				// prepare
@@ -413,7 +414,7 @@ func TestMultiEndpointReceiverParsers(t *testing.T) {
 				})
 
 				// verify
-				assert.ErrorContains(t, err, "unknown protocol set: garbage")
+				require.ErrorContains(t, err, "unknown protocol set: garbage")
 			})
 			for _, kase := range tt.cases {
 				t.Run(kase.name, func(t *testing.T) {
@@ -428,7 +429,7 @@ func TestMultiEndpointReceiverParsers(t *testing.T) {
 					}
 
 					// verify
-					assert.NoError(t, err)
+					require.NoError(t, err)
 					assert.Len(t, ports, len(kase.expectedSvc))
 					assert.ElementsMatch(t, ports, kase.expectedSvc)
 				})

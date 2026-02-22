@@ -310,7 +310,7 @@ func TestNewTLSConfig_VerifyConnection_OnlyVerifiesLeafCertificate(t *testing.T)
 	}
 
 	err = tlsConfig.VerifyConnection(cs)
-	require.NoError(t, err, "Should verify successfully with leaf cert first and intermediate second")
+	require.NoErrorf(t, err, "Should verify successfully with leaf cert first and intermediate second")
 
 	// Test with multiple intermediates - verify they are all added to the intermediates pool
 	csMultipleIntermediates := tls.ConnectionState{
@@ -318,5 +318,5 @@ func TestNewTLSConfig_VerifyConnection_OnlyVerifiesLeafCertificate(t *testing.T)
 	}
 
 	err = tlsConfig.VerifyConnection(csMultipleIntermediates)
-	require.NoError(t, err, "Should handle multiple intermediate certificates correctly")
+	require.NoErrorf(t, err, "Should handle multiple intermediate certificates correctly")
 }

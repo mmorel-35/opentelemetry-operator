@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/record"
 
@@ -43,7 +44,7 @@ func Test0_56_0Upgrade(t *testing.T) {
 		Recorder: record.NewFakeRecorder(upgrade.RecordBufferSize),
 	}
 	upgradedInstanceV1beta1, err := versionUpgrade.ManagedInstance(context.Background(), convertTov1beta1(t, collectorInstance))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	upgradedInstance := convertTov1alpha1(t, upgradedInstanceV1beta1)
 	assert.Equal(t, one, *upgradedInstance.Spec.Autoscaler.MinReplicas)
 }

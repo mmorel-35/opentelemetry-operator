@@ -10,15 +10,16 @@ import (
 
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetFlagSet(t *testing.T) {
 	fs := GetFlagSet(pflag.ExitOnError)
 
 	// Check if each flag exists
-	assert.NotNil(t, fs.Lookup(configFilePathFlagName), "Flag %s not found", configFilePathFlagName)
-	assert.NotNil(t, fs.Lookup(listenAddrFlagName), "Flag %s not found", listenAddrFlagName)
-	assert.NotNil(t, fs.Lookup(kubeConfigPathFlagName), "Flag %s not found", kubeConfigPathFlagName)
+	assert.NotNilf(t, fs.Lookup(configFilePathFlagName), "Flag %s not found", configFilePathFlagName)
+	assert.NotNilf(t, fs.Lookup(listenAddrFlagName), "Flag %s not found", listenAddrFlagName)
+	assert.NotNilf(t, fs.Lookup(kubeConfigPathFlagName), "Flag %s not found", kubeConfigPathFlagName)
 }
 
 func TestFlagGetters(t *testing.T) {
@@ -92,12 +93,12 @@ func TestFlagGetters(t *testing.T) {
 
 			// If an error is expected during parsing, we check it here.
 			if tt.expectedErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 				return
 			}
 
 			got, err := tt.getterFunc(fs)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.expectedValue, got)
 		})
 	}

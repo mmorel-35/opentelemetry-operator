@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -28,7 +29,7 @@ func TestParseEndpoint(t *testing.T) {
 	})
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Len(t, ports, 1)
 	assert.EqualValues(t, 1234, ports[0].Port)
 }
@@ -44,8 +45,8 @@ func TestFailedToParseEndpoint(t *testing.T) {
 	})
 
 	// verify
-	assert.NoError(t, err)
-	assert.Len(t, ports, 0)
+	require.NoError(t, err)
+	assert.Empty(t, ports)
 }
 
 func TestDownstreamParsers(t *testing.T) {
@@ -88,7 +89,7 @@ func TestDownstreamParsers(t *testing.T) {
 				_, err := parser.Ports(logger, tt.receiverName, func() {})
 
 				// verify
-				assert.ErrorContains(t, err, "expected a map, got 'func'")
+				require.ErrorContains(t, err, "expected a map, got 'func'")
 			})
 
 			t.Run("assigns the expected port", func(t *testing.T) {
@@ -99,13 +100,13 @@ func TestDownstreamParsers(t *testing.T) {
 				ports, err := parser.Ports(logger, tt.receiverName, map[string]any{})
 
 				if tt.defaultPort == 0 {
-					assert.Len(t, ports, 0)
+					assert.Empty(t, ports)
 					return
 				}
 				// verify
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Len(t, ports, 1)
-				assert.EqualValues(t, tt.defaultPort, ports[0].Port)
+				assert.Equal(t, tt.defaultPort, ports[0].Port)
 				assert.Equal(t, naming.PortName(tt.receiverName, tt.defaultPort), ports[0].Name)
 			})
 
@@ -127,7 +128,7 @@ func TestDownstreamParsers(t *testing.T) {
 				}
 
 				// verify
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Len(t, ports, 1)
 				assert.EqualValues(t, 65535, ports[0].Port)
 				assert.Equal(t, naming.PortName(tt.receiverName, tt.defaultPort), ports[0].Name)
@@ -141,7 +142,7 @@ func TestDownstreamParsers(t *testing.T) {
 				config, err := parser.GetDefaultConfig(logger, map[string]any{})
 
 				// verify
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				configMap, ok := config.(map[string]any)
 				assert.True(t, ok)
 				if tt.defaultPort == 0 {

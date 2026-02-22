@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDnsName(t *testing.T) {
@@ -29,11 +30,11 @@ func TestDnsName(t *testing.T) {
 		{"-foo", "afoo"},
 	}
 	rule, err := regexp.Compile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	for _, tt := range tests {
 		assert.Equal(t, tt.out, DNSName(tt.in))
 		matched := rule.Match([]byte(tt.out))
-		assert.True(t, matched, "%v is not a valid name", tt.out)
+		assert.Truef(t, matched, "%v is not a valid name", tt.out)
 	}
 }

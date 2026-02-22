@@ -885,7 +885,7 @@ func TestSDKInjection(t *testing.T) {
 			testContainer := &test.pod.Spec.Containers[0]
 			pod := inj.injectCommonSDKConfig(context.Background(), test.inst, corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: test.pod.Namespace}}, test.pod, testContainer, testContainer)
 			_, err = json.MarshalIndent(pod, "", "  ")
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, test.expected, pod)
 		})
 	}

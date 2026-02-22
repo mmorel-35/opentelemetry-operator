@@ -5123,7 +5123,7 @@ func TestInstrumentationLanguageContainersSet(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			err := test.instrumentations.setCommonInstrumentedContainers(test.ns, test.pod)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, test.expectedInstrumentations, test.instrumentations)
 		})
 	}

@@ -1094,7 +1094,7 @@ func TestLoadConfig(t *testing.T) {
 			}
 
 			got, err := w.LoadConfig(context.Background())
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			sanitizeScrapeConfigsForTest(got.ScrapeConfigs)
 			assert.Equal(t, tt.want.ScrapeConfigs, got.ScrapeConfigs)
@@ -1207,7 +1207,7 @@ func TestNamespaceLabelUpdate(t *testing.T) {
 	}
 
 	got, err := w.LoadConfig(context.Background())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	sanitizeScrapeConfigsForTest(got.ScrapeConfigs)
 	assert.Equal(t, want_before.ScrapeConfigs, got.ScrapeConfigs)
@@ -1221,7 +1221,7 @@ func TestNamespaceLabelUpdate(t *testing.T) {
 
 	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 		got, err = w.LoadConfig(context.Background())
-		assert.NoError(collect, err)
+		require.NoError(collect, err)
 
 		sanitizeScrapeConfigsForTest(got.ScrapeConfigs)
 		assert.Equal(collect, want_after.ScrapeConfigs, got.ScrapeConfigs)
@@ -1398,7 +1398,7 @@ func TestDefaultDurations(t *testing.T) {
 			}
 
 			got, err := w.LoadConfig(context.Background())
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.NotEmpty(t, got.ScrapeConfigs)
 
@@ -1669,7 +1669,7 @@ func TestCRDAvailabilityChecks(t *testing.T) {
 
 				expected := slices.Contains(tt.expectedCRDs, crd)
 
-				assert.Equal(t, expected, available, "CRD %s availability should match expectation", crd)
+				assert.Equalf(t, expected, available, "CRD %s availability should match expectation", crd)
 			}
 		})
 	}

@@ -553,9 +553,9 @@ func TestCollectorDefaultingWebhook(t *testing.T) {
 			err := cvw.Default(ctx, &test.otelcol)
 			if test.expected.Spec.Config.Service.Telemetry == nil {
 				_, applyErr := test.expected.Spec.Config.Service.ApplyDefaults(logr.Discard())
-				assert.NoError(t, applyErr, "could not apply defaults")
+				require.NoErrorf(t, applyErr, "could not apply defaults")
 			}
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			if diff := cmp.Diff(test.expected, test.otelcol); diff != "" {
 				t.Errorf("v1beta1.OpenTelemetryCollector mismatch (-want +got):\n%s", diff)
 			}
@@ -1434,11 +1434,11 @@ func TestOTELColValidatingWebhook(t *testing.T) {
 			ctx := context.Background()
 			warnings, err := cvw.ValidateCreate(ctx, &test.otelcol)
 			if test.expectedErr == "" {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
-				assert.ErrorContains(t, err, test.expectedErr)
+				require.ErrorContains(t, err, test.expectedErr)
 			}
-			assert.Equal(t, len(test.expectedWarnings), len(warnings))
+			assert.Len(t, warnings, len(test.expectedWarnings))
 			assert.ElementsMatch(t, warnings, test.expectedWarnings)
 		})
 	}
@@ -1503,11 +1503,11 @@ func TestOTELColValidateUpdateWebhook(t *testing.T) {
 			ctx := context.Background()
 			warnings, err := cvw.ValidateUpdate(ctx, &test.otelcolOld, &test.otelcolNew)
 			if test.expectedErr == "" {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
-				assert.ErrorContains(t, err, test.expectedErr)
+				require.ErrorContains(t, err, test.expectedErr)
 			}
-			assert.Equal(t, len(test.expectedWarnings), len(warnings))
+			assert.Len(t, warnings, len(test.expectedWarnings))
 			assert.ElementsMatch(t, warnings, test.expectedWarnings)
 		})
 	}

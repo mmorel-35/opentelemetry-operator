@@ -62,10 +62,10 @@ service:
 
 		actual, err := ConfigMap(param)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedName, actual.Name)
 		assert.Equal(t, expectedLables, actual.Labels)
-		assert.Equal(t, len(expectedData), len(actual.Data))
+		assert.Len(t, actual.Data, len(expectedData))
 		for k, expected := range expectedData {
 			assert.YAMLEq(t, expected, actual.Data[k])
 		}
@@ -93,7 +93,7 @@ service:
 		}
 
 		param, err := newParams("test/test-img", "testdata/http_sd_config_servicemonitor_test.yaml", nil)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		hash, _ := manifestutils.GetConfigMapSHA(param.OtelCol.Spec.Config)
 		expectedName := naming.ConfigMap("test", hash)
@@ -105,17 +105,17 @@ service:
 		param.OtelCol.Spec.TargetAllocator.Enabled = true
 		actual, err := ConfigMap(param)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedName, actual.Name)
 		assert.Equal(t, expectedLables, actual.Labels)
-		assert.Equal(t, len(expectedData), len(actual.Data))
+		assert.Len(t, actual.Data, len(expectedData))
 		for k, expected := range expectedData {
 			assert.YAMLEq(t, expected, actual.Data[k])
 		}
 
 		// Reset the value
 		expectedLables["app.kubernetes.io/version"] = "0.47.0"
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 	})
 
@@ -166,17 +166,17 @@ service:
 		param.OtelCol.Spec.TargetAllocator.Enabled = true
 		actual, err := ConfigMap(param)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedName, actual.Name)
 		assert.Equal(t, expectedLables, actual.Labels)
-		assert.Equal(t, len(expectedData), len(actual.Data))
+		assert.Len(t, actual.Data, len(expectedData))
 		for k, expected := range expectedData {
 			assert.YAMLEq(t, expected, actual.Data[k])
 		}
 
 		// Reset the value
 		expectedLables["app.kubernetes.io/version"] = "0.47.0"
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 	})
 
@@ -227,16 +227,16 @@ service:
 
 		actual, err := ConfigMap(param)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expectedName, actual.Name)
 		assert.Equal(t, expectedLables, actual.Labels)
-		assert.Equal(t, len(expectedData), len(actual.Data))
+		assert.Len(t, actual.Data, len(expectedData))
 		for k, expected := range expectedData {
 			assert.YAMLEq(t, expected, actual.Data[k])
 		}
 
 		// Reset the value
 		expectedLables["app.kubernetes.io/version"] = "0.47.0"
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 }

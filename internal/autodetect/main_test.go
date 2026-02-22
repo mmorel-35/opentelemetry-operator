@@ -73,7 +73,7 @@ func TestDetectPlatformBasedOnAvailableAPIGroups(t *testing.T) {
 		ora, err := autoDetect.OpenShiftRoutesAvailability()
 
 		// verify
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, tt.expected, ora)
 	}
 }
@@ -156,7 +156,7 @@ func TestDetectPlatformBasedOnAvailableAPIGroupsPrometheus(t *testing.T) {
 		ora, err := autoDetect.PrometheusCRsAvailability()
 
 		// verify
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, tt.expected, ora)
 	}
 }
@@ -258,7 +258,7 @@ func TestDetectRBACPermissionsBasedOnAvailableClusterRoles(t *testing.T) {
 			if tt.shouldError {
 				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -349,7 +349,7 @@ func TestCertManagerAvailability(t *testing.T) {
 			if tt.shouldError {
 				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -389,7 +389,7 @@ func TestConfigChangesOnAutoDetect(t *testing.T) {
 	require.Equal(t, certmanager.NotAvailable, cfg.CertManagerAvailability)
 	require.Equal(t, targetallocator.NotAvailable, cfg.TargetAllocatorAvailability)
 	require.Equal(t, opampbridge.NotAvailable, cfg.OpAmpBridgeAvailability)
-	require.Equal(t, false, cfg.Internal.NativeSidecarSupport)
+	require.False(t, cfg.Internal.NativeSidecarSupport)
 
 	// test
 	err := autodetect.ApplyAutoDetect(mock, &cfg, ctrl.Log.WithName("test"))
@@ -402,7 +402,7 @@ func TestConfigChangesOnAutoDetect(t *testing.T) {
 	require.Equal(t, certmanager.Available, cfg.CertManagerAvailability)
 	require.Equal(t, targetallocator.Available, cfg.TargetAllocatorAvailability)
 	require.Equal(t, opampbridge.Available, cfg.OpAmpBridgeAvailability)
-	require.Equal(t, true, cfg.Internal.NativeSidecarSupport)
+	require.True(t, cfg.Internal.NativeSidecarSupport)
 }
 
 var _ autodetect.AutoDetect = (*mockAutoDetect)(nil)

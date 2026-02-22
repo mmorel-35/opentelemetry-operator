@@ -78,20 +78,20 @@ func TestDiscovery(t *testing.T) {
 
 	go func() {
 		runErr := d.Run()
-		assert.Error(t, runErr)
+		require.Error(t, runErr)
 	}()
 	go func() {
 		runErr := manager.Run()
-		assert.NoError(t, runErr)
+		require.NoError(t, runErr)
 	}()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cfg := config.CreateDefaultConfig()
 			err := config.LoadFromFile(tt.args.file, &cfg)
-			assert.NoError(t, err)
-			assert.True(t, len(cfg.PromConfig.ScrapeConfigs) > 0)
+			require.NoError(t, err)
+			assert.NotEmpty(t, cfg.PromConfig.ScrapeConfigs)
 			err = manager.ApplyConfig(allocatorWatcher.EventSourcePrometheusCR, cfg.PromConfig.ScrapeConfigs)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			gotTargets := <-results
 			sort.Strings(gotTargets)
@@ -325,7 +325,7 @@ func TestDiscovery_ScrapeConfigHashing(t *testing.T) {
 						expectedConfig[scrapeConfig.JobName] = scrapeConfig
 					}
 				}
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.NotZero(t, manager.scrapeConfigsHash)
 				// Assert that scrape configs in manager are correctly
 				// reflected in the scrape job updater.
@@ -336,7 +336,7 @@ func TestDiscovery_ScrapeConfigHashing(t *testing.T) {
 			} else {
 				// In case of error, assert that we retain the last
 				// known valid config.
-				assert.Error(t, err)
+				require.Error(t, err)
 				assert.Equal(t, lastValidHash, manager.scrapeConfigsHash)
 				assert.Equal(t, lastValidConfig, scu.mockCfg)
 			}
@@ -416,19 +416,19 @@ func TestDiscoveryTargetHashing(t *testing.T) {
 
 	go func() {
 		runErr := d.Run()
-		assert.Error(t, runErr)
+		require.Error(t, runErr)
 	}()
 	go func() {
 		runErr := manager.Run()
-		assert.NoError(t, runErr)
+		require.NoError(t, runErr)
 	}()
 
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			assert.NoError(t, err)
-			assert.True(t, len(tt.cfg.ScrapeConfigs) > 0)
+			require.NoError(t, err)
+			assert.NotEmpty(t, tt.cfg.ScrapeConfigs)
 			err = manager.ApplyConfig(allocatorWatcher.EventSourcePrometheusCR, tt.cfg.ScrapeConfigs)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			gotTargets := <-results
 
@@ -441,7 +441,7 @@ func TestDiscoveryTargetHashing(t *testing.T) {
 				}
 				targetHashes[hash] = true
 			}
-			assert.Equal(t, len(gotTargets), len(targetHashes), "Number of unique hashes should match number of targets")
+			assert.Lenf(t, targetHashes, len(gotTargets), "Number of unique hashes should match number of targets")
 		})
 	}
 }
@@ -460,7 +460,7 @@ func TestDiscovery_NoConfig(t *testing.T) {
 
 	go func() {
 		err := d.Run()
-		assert.Error(t, err)
+		require.Error(t, err)
 	}()
 	// check the updated scrape configs
 	expectedScrapeConfigs := map[string]*promconfig.ScrapeConfig{}
@@ -505,8 +505,8 @@ func TestProcessTargetGroups_StableLabelIterationOrder(t *testing.T) {
 	i := 0
 	results[0].Labels.Range(func(l labels.Label) {
 		expected := string(rune('a' + i))
-		assert.Equal(t, expected, l.Name, "unexpected label key at index %d", i)
-		assert.Equal(t, expected, l.Value, "unexpected label value at index %d", i)
+		assert.Equalf(t, expected, l.Name, "unexpected label key at index %d", i)
+		assert.Equalf(t, expected, l.Value, "unexpected label value at index %d", i)
 		i += 1
 	})
 }

@@ -208,7 +208,7 @@ func TestApplyFeatureGateOverrides_MixedEnableDisable(t *testing.T) {
 	require.NoError(t, err)
 
 	// Verify states
-	assert.True(t, SetGolangFlags.IsEnabled(), "golang.flags should be enabled")
-	assert.True(t, EnableTargetAllocatorMTLS.IsEnabled(), "mtls should be enabled")
-	assert.False(t, EnableOperatorNetworkPolicy.IsEnabled(), "networkpolicy should be disabled")
+	assert.Truef(t, SetGolangFlags.IsEnabled(), "golang.flags should be enabled")
+	assert.Truef(t, EnableTargetAllocatorMTLS.IsEnabled(), "mtls should be enabled")
+	assert.Falsef(t, EnableOperatorNetworkPolicy.IsEnabled(), "networkpolicy should be disabled")
 }

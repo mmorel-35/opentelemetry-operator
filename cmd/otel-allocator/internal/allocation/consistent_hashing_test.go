@@ -23,7 +23,7 @@ func TestRelativelyEvenDistribution(t *testing.T) {
 	actualCollectors := c.Collectors()
 	assert.Len(t, actualCollectors, numCols)
 	for _, col := range actualCollectors {
-		assert.InDelta(t, col.NumTargets, expectedPerCollector, expectedDelta)
+		assert.InDelta(t, expectedPerCollector, col.NumTargets, expectedDelta)
 	}
 }
 
@@ -44,7 +44,7 @@ func TestFullReallocation(t *testing.T) {
 	assert.Len(t, updatedCollectors, 10)
 	for _, item := range updatedTargetItems {
 		_, ok := updatedCollectors[item.CollectorName]
-		assert.True(t, ok, "Some items weren't reallocated correctly")
+		assert.Truef(t, ok, "Some items weren't reallocated correctly")
 	}
 }
 
@@ -116,6 +116,6 @@ func TestTargetsWithNoCollectorsConsistentHashing(t *testing.T) {
 	actualCollectors := c.Collectors()
 	assert.Len(t, actualCollectors, numCols)
 	for _, col := range actualCollectors {
-		assert.InDelta(t, col.NumTargets, expectedPerCollector, expectedDelta)
+		assert.InDelta(t, expectedPerCollector, col.NumTargets, expectedDelta)
 	}
 }

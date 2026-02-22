@@ -35,7 +35,7 @@ func TestDesiredRoutes(t *testing.T) {
 		}
 
 		actual, err := Routes(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Nil(t, actual)
 	})
 
@@ -58,7 +58,7 @@ func TestDesiredRoutes(t *testing.T) {
 
 		actual, err := Routes(params)
 		assert.Nil(t, actual)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	})
 
 	t.Run("should return nil unable to do something else", func(t *testing.T) {
@@ -83,7 +83,7 @@ func TestDesiredRoutes(t *testing.T) {
 		}
 
 		routes, err := Routes(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		got := routes[0]
 
 		assert.NotEqual(t, &routev1.Route{
@@ -132,8 +132,8 @@ func TestDesiredRoutes(t *testing.T) {
 		}
 
 		routes, err := Routes(params)
-		assert.NoError(t, err)
-		require.Equal(t, 3, len(routes))
+		require.NoError(t, err)
+		require.Len(t, routes, 3)
 		assert.Equal(t, "web.example.com", routes[0].Spec.Host)
 		assert.Equal(t, "otlp-grpc.example.com", routes[1].Spec.Host)
 		assert.Equal(t, "otlp-test-grpc.example.com", routes[2].Spec.Host)
@@ -153,11 +153,11 @@ func TestDesiredRoutes(t *testing.T) {
 		}
 
 		routes, err := Routes(params)
-		assert.NoError(t, err)
-		require.Equal(t, 3, len(routes))
-		assert.Equal(t, "", routes[0].Spec.Host)
-		assert.Equal(t, "", routes[1].Spec.Host)
-		assert.Equal(t, "", routes[2].Spec.Host)
+		require.NoError(t, err)
+		require.Len(t, routes, 3)
+		assert.Empty(t, routes[0].Spec.Host)
+		assert.Empty(t, routes[1].Spec.Host)
+		assert.Empty(t, routes[2].Spec.Host)
 	})
 }
 
@@ -165,14 +165,14 @@ func TestRoutes(t *testing.T) {
 	t.Run("wrong mode", func(t *testing.T) {
 		params := deploymentParams()
 		routes, err := Routes(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Nil(t, routes)
 	})
 
 	t.Run("supported mode and service exists", func(t *testing.T) {
 		params := deploymentParams()
 		routes, err := Routes(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Nil(t, routes)
 	})
 

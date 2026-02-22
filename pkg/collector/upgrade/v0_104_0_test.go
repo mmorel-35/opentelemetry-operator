@@ -43,7 +43,7 @@ func Test0_104_0Upgrade(t *testing.T) {
 	if err != nil {
 		t.Errorf("expect err: nil but got: %v", err)
 	}
-	assert.EqualValues(t,
+	assert.Equalf(t,
 		map[string]string{
 			"feature-gates": "-component.UseLocalHostAsDefaultHost",
 		},
@@ -59,24 +59,24 @@ func TestTAUnifyEnvVarExpansion(t *testing.T) {
 		},
 	}
 	upgrade.TAUnifyEnvVarExpansion(otelcol)
-	assert.Nil(t, otelcol.Spec.OpenTelemetryCommonFields.Args, "expect nil")
+	assert.Nilf(t, otelcol.Spec.OpenTelemetryCommonFields.Args, "expect nil")
 	otelcol.Spec.Config.Receivers.Object = map[string]any{
 		"prometheus": nil,
 	}
 	upgrade.TAUnifyEnvVarExpansion(otelcol)
-	assert.NotNil(t, otelcol.Spec.OpenTelemetryCommonFields.Args, "expect not nil")
+	assert.NotNilf(t, otelcol.Spec.OpenTelemetryCommonFields.Args, "expect not nil")
 	expect := map[string]string{
 		"feature-gates": "-confmap.unifyEnvVarExpansion",
 	}
-	assert.EqualValues(t, otelcol.Spec.OpenTelemetryCommonFields.Args, expect)
+	assert.Equal(t, otelcol.Spec.OpenTelemetryCommonFields.Args, expect)
 	upgrade.TAUnifyEnvVarExpansion(otelcol)
-	assert.EqualValues(t, otelcol.Spec.OpenTelemetryCommonFields.Args, expect)
+	assert.Equal(t, otelcol.Spec.OpenTelemetryCommonFields.Args, expect)
 	expect = map[string]string{
 		"feature-gates": "-confmap.unifyEnvVarExpansion,+abc",
 	}
 	otelcol.Spec.OpenTelemetryCommonFields.Args = expect
 	upgrade.TAUnifyEnvVarExpansion(otelcol)
-	assert.EqualValues(t, otelcol.Spec.OpenTelemetryCommonFields.Args, expect)
+	assert.Equal(t, otelcol.Spec.OpenTelemetryCommonFields.Args, expect)
 	otelcol.Spec.OpenTelemetryCommonFields.Args = map[string]string{
 		"feature-gates": "+abc",
 	}
@@ -84,5 +84,5 @@ func TestTAUnifyEnvVarExpansion(t *testing.T) {
 	expect = map[string]string{
 		"feature-gates": "+abc,-confmap.unifyEnvVarExpansion",
 	}
-	assert.EqualValues(t, otelcol.Spec.OpenTelemetryCommonFields.Args, expect)
+	assert.Equal(t, otelcol.Spec.OpenTelemetryCommonFields.Args, expect)
 }

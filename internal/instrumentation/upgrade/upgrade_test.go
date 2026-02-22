@@ -64,7 +64,7 @@ func TestUpgrade(t *testing.T) {
 		testScheme,
 		cfg,
 	).Default(context.Background(), inst)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "java:1", inst.Spec.Java.Image)
 	assert.Equal(t, "nodejs:1", inst.Spec.NodeJS.Image)
 	assert.Equal(t, "python:1", inst.Spec.Python.Image)

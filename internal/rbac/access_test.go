@@ -219,7 +219,7 @@ func TestReviewer_CheckPolicyRules(t *testing.T) {
 			ok, deniedReviews := AllSubjectAccessReviewsAllowed(got)
 			assert.Equal(t, tt.want, ok)
 			if !ok {
-				assert.Equal(t, tt.numFailedReviews, len(deniedReviews))
+				assert.Len(t, deniedReviews, tt.numFailedReviews)
 			}
 		})
 	}

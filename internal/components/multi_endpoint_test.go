@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
@@ -58,7 +59,7 @@ func TestMultiPortReceiver_ParserName(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s, err := tt.fields.b.Build()
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equalf(t, tt.want, s.ParserName(), "ParserName()")
 		})
 	}
@@ -93,7 +94,7 @@ func TestMultiPortReceiver_ParserType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s, err := tt.fields.b.Build()
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equalf(t, tt.want, s.ParserType(), "ParserType()")
 		})
 	}
@@ -345,16 +346,16 @@ func TestMultiPortReceiver_Ports(t *testing.T) {
 			}
 			assert.ElementsMatchf(t, tt.want, got, "Ports(%v)", tt.args.config)
 			rbacGen, err := s.GetRBACRules(logr.Discard(), tt.args.config)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Nil(t, rbacGen)
 			livenessProbe, livenessErr := s.GetLivenessProbe(logr.Discard(), tt.args.config)
-			assert.NoError(t, livenessErr)
+			require.NoError(t, livenessErr)
 			assert.Nil(t, livenessProbe)
 			readinessProbe, readinessErr := s.GetReadinessProbe(logr.Discard(), tt.args.config)
-			assert.NoError(t, readinessErr)
+			require.NoError(t, readinessErr)
 			assert.Nil(t, readinessProbe)
 			startupProbe, startupErr := s.GetStartupProbe(logr.Discard(), tt.args.config)
-			assert.NoError(t, startupErr)
+			require.NoError(t, startupErr)
 			assert.Nil(t, startupProbe)
 		})
 	}

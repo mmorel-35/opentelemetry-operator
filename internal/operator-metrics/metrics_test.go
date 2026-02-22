@@ -30,7 +30,7 @@ func TestNewOperatorMetrics(t *testing.T) {
 	config := &rest.Config{}
 	scheme := runtime.NewScheme()
 	metrics, err := NewOperatorMetrics(config, scheme, logr.Discard())
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, metrics.(operatorMetrics).kubeClient)
 }
 
@@ -90,7 +90,7 @@ func TestOperatorMetrics_Start(t *testing.T) {
 
 	cancel()
 	err = <-errChan
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestOperatorMetrics_NeedLeaderElection(t *testing.T) {

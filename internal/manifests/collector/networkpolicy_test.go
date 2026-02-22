@@ -9,6 +9,7 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -42,7 +43,7 @@ func TestNetworkPolicy(t *testing.T) {
 		}
 
 		actual, err := NetworkPolicy(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, actual)
 
 		// Should have metrics port (8888) by default
@@ -53,11 +54,11 @@ func TestNetworkPolicy(t *testing.T) {
 
 	t.Run("create network policy from networkpolicies.yaml", func(t *testing.T) {
 		configYAML, err := os.ReadFile("testdata/networkpolicies.yaml")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		cfg := v1beta1.Config{}
 		err = yaml.Unmarshal(configYAML, &cfg)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		params := manifests.Params{
 			Config: config.Config{},
@@ -77,7 +78,7 @@ func TestNetworkPolicy(t *testing.T) {
 		}
 
 		actual, err := NetworkPolicy(params)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, actual)
 
 		tcp := corev1.ProtocolTCP

@@ -149,27 +149,27 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							d := appsv1.Deployment{}
 							exists, err := populateObjectIfExists(t, &d, namespacedObjectName(naming.Collector(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Equal(t, int32(2), *d.Spec.Replicas)
 							assert.Contains(t, d.Annotations, annotationName)
 							assert.Contains(t, d.Labels, labelName)
 							// confirm the initial strategy is unset
-							assert.Equal(t, d.Spec.Strategy.RollingUpdate.MaxUnavailable.IntVal, int32(0))
-							assert.Equal(t, d.Spec.Strategy.RollingUpdate.MaxSurge.IntVal, int32(0))
+							assert.Equal(t, int32(0), d.Spec.Strategy.RollingUpdate.MaxUnavailable.IntVal)
+							assert.Equal(t, int32(0), d.Spec.Strategy.RollingUpdate.MaxSurge.IntVal)
 							svc := &v1.Service{}
 							exists, err = populateObjectIfExists(t, svc, namespacedObjectName(naming.Service(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
-							assert.Equal(t, svc.Spec.Selector, map[string]string{
+							assert.Equal(t, map[string]string{
 								"app.kubernetes.io/component":  "opentelemetry-collector",
 								"app.kubernetes.io/instance":   "default.test-deployment",
 								"app.kubernetes.io/managed-by": "opentelemetry-operator",
 								"app.kubernetes.io/part-of":    "opentelemetry",
-							})
+							}, svc.Spec.Selector)
 							sa := &v1.ServiceAccount{}
 							exists, err = populateObjectIfExists(t, sa, namespacedObjectName(naming.ServiceAccount(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Equal(t, map[string]string{
 								annotationName: "true",
@@ -189,30 +189,30 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							d := appsv1.Deployment{}
 							exists, err := populateObjectIfExists(t, &d, namespacedObjectName(naming.Collector(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Equal(t, int32(3), *d.Spec.Replicas)
 							// confirm the strategy has been changed
-							assert.Equal(t, d.Spec.Strategy.RollingUpdate.MaxUnavailable.IntVal, int32(1))
-							assert.Equal(t, d.Spec.Strategy.RollingUpdate.MaxSurge.IntVal, int32(1))
+							assert.Equal(t, int32(1), d.Spec.Strategy.RollingUpdate.MaxUnavailable.IntVal)
+							assert.Equal(t, int32(1), d.Spec.Strategy.RollingUpdate.MaxSurge.IntVal)
 							// confirm that we don't remove annotations and labels even if we don't set them
 							assert.Contains(t, d.Annotations, annotationName)
 							assert.Contains(t, d.Labels, labelName)
 							actual := v1.Service{}
 							exists, err = populateObjectIfExists(t, &actual, namespacedObjectName(naming.Service(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Contains(t, actual.Spec.Ports, extraPorts.ServicePort)
-							assert.Equal(t, actual.Spec.Selector, map[string]string{
+							assert.Equal(t, map[string]string{
 								"app.kubernetes.io/component":  "opentelemetry-collector",
 								"app.kubernetes.io/instance":   "default.test-deployment",
 								"app.kubernetes.io/managed-by": "opentelemetry-operator",
 								"app.kubernetes.io/part-of":    "opentelemetry",
-							})
+							}, actual.Spec.Selector)
 
 							sa := &v1.ServiceAccount{}
 							exists, err = populateObjectIfExists(t, sa, namespacedObjectName(naming.ServiceAccount(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Equal(t, map[string]string{
 								annotationName:            "true",
@@ -240,19 +240,19 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							d := appsv1.StatefulSet{}
 							exists, err := populateObjectIfExists(t, &d, namespacedObjectName(naming.Collector(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Equal(t, int32(1), *d.Spec.Replicas)
 							svc := &v1.Service{}
 							exists, err = populateObjectIfExists(t, svc, namespacedObjectName(naming.Service(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
-							assert.Equal(t, svc.Spec.Selector, map[string]string{
+							assert.Equal(t, map[string]string{
 								"app.kubernetes.io/component":  "opentelemetry-collector",
 								"app.kubernetes.io/instance":   "default.test-otlp",
 								"app.kubernetes.io/managed-by": "opentelemetry-operator",
 								"app.kubernetes.io/part-of":    "opentelemetry",
-							})
+							}, svc.Spec.Selector)
 							assert.Len(t, svc.Spec.Ports, 4)
 						},
 					},
@@ -308,7 +308,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							d := networkingv1.Ingress{}
 							exists, err := populateObjectIfExists(t, &d, namespacedObjectName(naming.Ingress(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 						},
 					},
@@ -321,7 +321,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							d := networkingv1.Ingress{}
 							exists, err := populateObjectIfExists(t, &d, namespacedObjectName(naming.Ingress(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Equal(t, "something-else.com", d.Spec.Rules[0].Host)
 						},
@@ -345,7 +345,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 							got := routev1.Route{}
 							nsn := types.NamespacedName{Namespace: params.Namespace, Name: "otlp-grpc-test-route-route"}
 							exists, err := populateObjectIfExists(t, &got, nsn)
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 						},
 					},
@@ -359,7 +359,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 							got := routev1.Route{}
 							nsn := types.NamespacedName{Namespace: params.Namespace, Name: "otlp-grpc-test-route-route"}
 							exists, err := populateObjectIfExists(t, &got, nsn)
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Equal(t, "otlp-grpc.something-else.com", got.Spec.Host)
 						},
@@ -382,7 +382,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							actual := autoscalingv2.HorizontalPodAutoscaler{}
 							exists, hpaErr := populateObjectIfExists(t, &actual, namespacedObjectName(naming.HorizontalPodAutoscaler(params.Name), params.Namespace))
-							assert.NoError(t, hpaErr)
+							require.NoError(t, hpaErr)
 							require.Len(t, actual.Spec.Metrics, 1)
 							assert.Equal(t, int32(90), *actual.Spec.Metrics[0].Resource.Target.AverageUtilization)
 							assert.Equal(t, int32(3), *actual.Spec.MinReplicas)
@@ -399,7 +399,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							actual := autoscalingv2.HorizontalPodAutoscaler{}
 							exists, hpaErr := populateObjectIfExists(t, &actual, namespacedObjectName(naming.HorizontalPodAutoscaler(params.Name), params.Namespace))
-							assert.NoError(t, hpaErr)
+							require.NoError(t, hpaErr)
 							require.Len(t, actual.Spec.Metrics, 1)
 							assert.Equal(t, int32(90), *actual.Spec.Metrics[0].Resource.Target.AverageUtilization)
 							assert.Equal(t, int32(1), *actual.Spec.MinReplicas)
@@ -425,7 +425,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							actual := policyV1.PodDisruptionBudget{}
 							exists, pdbErr := populateObjectIfExists(t, &actual, namespacedObjectName(naming.HorizontalPodAutoscaler(params.Name), params.Namespace))
-							assert.NoError(t, pdbErr)
+							require.NoError(t, pdbErr)
 							assert.Equal(t, int32(1), actual.Spec.MaxUnavailable.IntVal)
 							assert.Nil(t, actual.Spec.MinAvailable)
 							assert.True(t, exists)
@@ -440,7 +440,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							actual := policyV1.PodDisruptionBudget{}
 							exists, pdbErr := populateObjectIfExists(t, &actual, namespacedObjectName(naming.HorizontalPodAutoscaler(params.Name), params.Namespace))
-							assert.NoError(t, pdbErr)
+							require.NoError(t, pdbErr)
 							assert.Nil(t, actual.Spec.MaxUnavailable)
 							assert.Equal(t, int32(1), actual.Spec.MinAvailable.IntVal)
 							assert.True(t, exists)
@@ -462,7 +462,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 					checks: []check[v1beta1.OpenTelemetryCollector]{
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							exists, err := populateObjectIfExists(t, &appsv1.DaemonSet{}, namespacedObjectName(naming.Collector(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 						},
 					},
@@ -489,14 +489,14 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 							configHash, _ := getConfigMapSHAFromString(params.Spec.Config)
 							configHash = configHash[:8]
 							exists, err := populateObjectIfExists(t, &v1.ConfigMap{}, namespacedObjectName(naming.ConfigMap(params.Name, configHash), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							exists, err = populateObjectIfExists(t, &appsv1.StatefulSet{}, namespacedObjectName(naming.Collector(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							// Check the TA doesn't exist
 							exists, err = populateObjectIfExists(t, &v1alpha1.TargetAllocator{}, namespacedObjectName(naming.TargetAllocator(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.False(t, exists)
 						},
 					},
@@ -510,7 +510,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 							configHash, _ := getConfigMapSHAFromString(params.Spec.Config)
 							configHash = configHash[:8]
 							exists, err := populateObjectIfExists(t, &v1.ConfigMap{}, namespacedObjectName(naming.ConfigMap(params.Name, configHash), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							actual := v1alpha1.TargetAllocator{}
 							exists, err = populateObjectIfExists(t, &actual, namespacedObjectName(params.Name, params.Namespace))
@@ -555,7 +555,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 							configHash, _ := getConfigMapSHAFromString(params.Spec.Config)
 							configHash = configHash[:8]
 							exists, err := populateObjectIfExists(t, &v1.ConfigMap{}, namespacedObjectName(naming.ConfigMap(params.Name, configHash), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							actual := v1alpha1.TargetAllocator{}
 							exists, err = populateObjectIfExists(t, &actual, namespacedObjectName(params.Name, params.Namespace))
@@ -575,7 +575,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 							exists, err := populateObjectIfExists(t, &actual, namespacedObjectName(params.Name, params.Namespace))
 							require.NoError(t, err)
 							require.True(t, exists)
-							assert.Equal(t, actual.Spec.Image, updatedTaImage)
+							assert.Equal(t, updatedTaImage, actual.Spec.Image)
 						},
 					},
 					wantErr:     assert.NoError,
@@ -596,7 +596,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1beta1.OpenTelemetryCollector) {
 							o := v1beta1.OpenTelemetryCollector{}
 							exists, err := populateObjectIfExists(t, &o, namespacedObjectName(naming.Collector(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.False(t, exists) // There should be no collector anymore
 						},
 					},
@@ -622,7 +622,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 			}
 			reconciler := createTestReconciler(t, testCtx, cfg)
 
-			assert.True(t, len(tt.want) > 0, "must have at least one group of checks to run")
+			assert.NotEmptyf(t, tt.want, "must have at least one group of checks to run")
 			firstCheck := tt.want[0]
 			// Check for this before create, otherwise it's blown away.
 			deletionTimestamp := tt.args.params.GetDeletionTimestamp()
@@ -635,17 +635,17 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 				assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 					actual := &v1beta1.OpenTelemetryCollector{}
 					err := reconciler.Get(testContext, nsn, actual)
-					assert.NoError(collect, err)
+					require.NoError(collect, err)
 				}, time.Second*30, time.Millisecond*100)
 			}
 			if deletionTimestamp != nil {
 				err := k8sClient.Delete(testContext, &tt.args.params, client.PropagationPolicy(metav1.DeletePropagationForeground))
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				// wait until the reconciler sees the deletion
 				assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 					actual := &v1beta1.OpenTelemetryCollector{}
 					err := reconciler.Get(testContext, nsn, actual)
-					assert.NoError(collect, err)
+					require.NoError(collect, err)
 					assert.NotNil(collect, actual.GetDeletionTimestamp())
 				}, time.Second*30, time.Millisecond*100)
 			}
@@ -666,12 +666,12 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 				existing := v1beta1.OpenTelemetryCollector{}
 				found, err := populateObjectIfExists(t, &existing, nsn)
 				assert.True(t, found)
-				assert.NoError(t, err)
+				require.NoError(t, err)
 
 				updateParam.SetResourceVersion(existing.ResourceVersion)
 				updateParam.SetUID(existing.UID)
 				err = k8sClient.Update(testContext, &updateParam)
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				if err != nil {
 					continue
 				}
@@ -679,7 +679,7 @@ func TestOpenTelemetryCollectorReconciler_Reconcile(t *testing.T) {
 				assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 					actual := &v1beta1.OpenTelemetryCollector{}
 					err = reconciler.Get(testContext, nsn, actual)
-					assert.NoError(collect, err)
+					require.NoError(collect, err)
 					assert.Equal(collect, updateParam.Spec, actual.Spec)
 				}, time.Second*30, time.Millisecond*100)
 				req := k8sreconcile.Request{
@@ -805,7 +805,7 @@ func TestOpenTelemetryCollectorReconciler_RemoveDisabled(t *testing.T) {
 			require.NoError(t, err)
 			t.Cleanup(func() {
 				delErr := k8sClient.Delete(context.Background(), namespace)
-				assert.NoError(t, delErr)
+				require.NoError(t, delErr)
 			})
 			collectorName := sanitizeResourceName(tc.name)
 			collector := startingCollector.DeepCopy()
@@ -825,11 +825,11 @@ func TestOpenTelemetryCollectorReconciler_RemoveDisabled(t *testing.T) {
 				NamespacedName: nsn,
 			}
 			_, reconcileErr := reconciler.Reconcile(clientCtx, req)
-			assert.NoError(t, reconcileErr)
+			require.NoError(t, reconcileErr)
 
 			assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 				list, listErr := getAllOwnedResources(clientCtx, reconciler, collector, opts...)
-				assert.NoError(collect, listErr)
+				require.NoError(collect, listErr)
 				assert.NotEmpty(collect, list)
 				assert.Len(collect, list, expectedStartingResourceCount)
 			}, time.Second*30, time.Millisecond*100)
@@ -842,17 +842,17 @@ func TestOpenTelemetryCollectorReconciler_RemoveDisabled(t *testing.T) {
 			assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 				actual := &v1beta1.OpenTelemetryCollector{}
 				err = reconciler.Get(clientCtx, nsn, actual)
-				assert.NoError(collect, err)
+				require.NoError(collect, err)
 				assert.Equal(collect, collector.Spec, actual.Spec)
 			}, time.Second*30, time.Millisecond*100)
 
 			_, reconcileErr = reconciler.Reconcile(clientCtx, req)
-			assert.NoError(t, reconcileErr)
+			require.NoError(t, reconcileErr)
 
 			expectedResourceCount := expectedStartingResourceCount - tc.expectedResourcesDeletedCount
 			assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 				list, listErr := getAllOwnedResources(clientCtx, reconciler, collector, opts...)
-				assert.NoError(collect, listErr)
+				require.NoError(collect, listErr)
 				assert.NotEmpty(collect, list)
 				assert.Len(collect, list, expectedResourceCount)
 			}, time.Second*30, time.Millisecond*100)
@@ -929,12 +929,12 @@ func TestOpenTelemetryCollectorReconciler_VersionedConfigMaps(t *testing.T) {
 		NamespacedName: nsn,
 	}
 	_, reconcileErr := reconciler.Reconcile(clientCtx, req)
-	assert.NoError(t, reconcileErr)
+	require.NoError(t, reconcileErr)
 
 	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 		configMaps := &v1.ConfigMapList{}
 		listErr := k8sClient.List(clientCtx, configMaps, opts...)
-		assert.NoError(collect, listErr)
+		require.NoError(collect, listErr)
 		assert.NotEmpty(collect, configMaps)
 		assert.Len(collect, configMaps.Items, 1)
 	}, time.Second*30, time.Millisecond*100)
@@ -950,17 +950,17 @@ func TestOpenTelemetryCollectorReconciler_VersionedConfigMaps(t *testing.T) {
 	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 		actual := &v1beta1.OpenTelemetryCollector{}
 		err = reconciler.Get(clientCtx, nsn, actual)
-		assert.NoError(collect, err)
+		require.NoError(collect, err)
 		assert.Equal(collect, collector.Spec, actual.Spec)
 	}, time.Second*30, time.Millisecond*100)
 
 	_, reconcileErr = reconciler.Reconcile(clientCtx, req)
-	assert.NoError(t, reconcileErr)
+	require.NoError(t, reconcileErr)
 
 	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 		configMaps := &v1.ConfigMapList{}
 		listErr := k8sClient.List(clientCtx, configMaps, opts...)
-		assert.NoError(collect, listErr)
+		require.NoError(collect, listErr)
 		assert.NotEmpty(collect, configMaps)
 		assert.Len(collect, configMaps.Items, 2)
 	}, time.Second*30, time.Millisecond*100)
@@ -976,28 +976,28 @@ func TestOpenTelemetryCollectorReconciler_VersionedConfigMaps(t *testing.T) {
 	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 		actual := &v1beta1.OpenTelemetryCollector{}
 		err = reconciler.Get(clientCtx, nsn, actual)
-		assert.NoError(collect, err)
+		require.NoError(collect, err)
 		assert.Equal(collect, collector.Spec, actual.Spec)
 	}, time.Second*30, time.Millisecond*100)
 
 	_, reconcileErr = reconciler.Reconcile(clientCtx, req)
-	assert.NoError(t, reconcileErr)
+	require.NoError(t, reconcileErr)
 
 	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 		configMaps := &v1.ConfigMapList{}
 		listErr := k8sClient.List(clientCtx, configMaps, opts...)
-		assert.NoError(collect, listErr)
+		require.NoError(collect, listErr)
 		assert.NotEmpty(collect, configMaps)
 		assert.Len(collect, configMaps.Items, 3)
 	}, time.Second*30, time.Millisecond*100)
 
 	_, reconcileErr = reconciler.Reconcile(clientCtx, req)
-	assert.NoError(t, reconcileErr)
+	require.NoError(t, reconcileErr)
 
 	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 		configMaps := &v1.ConfigMapList{}
 		listErr := k8sClient.List(clientCtx, configMaps, opts...)
-		assert.NoError(collect, listErr)
+		require.NoError(collect, listErr)
 		assert.NotEmpty(collect, configMaps)
 		assert.Len(collect, configMaps.Items, 2)
 	}, time.Second*5, time.Second)
@@ -1047,16 +1047,16 @@ func TestOpAMPBridgeReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1alpha1.OpAMPBridge) {
 							d := appsv1.Deployment{}
 							exists, err := populateObjectIfExists(t, &d, namespacedObjectName(naming.OpAMPBridge(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Equal(t, int32(1), *d.Spec.Replicas)
 							assert.Contains(t, d.Spec.Template.Annotations, annotationName)
 							assert.Contains(t, d.Labels, labelName)
 							exists, err = populateObjectIfExists(t, &v1.Service{}, namespacedObjectName(naming.OpAMPBridgeService(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							exists, err = populateObjectIfExists(t, &v1.ServiceAccount{}, namespacedObjectName(naming.OpAMPBridgeServiceAccount(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 						},
 					},
@@ -1069,14 +1069,14 @@ func TestOpAMPBridgeReconciler_Reconcile(t *testing.T) {
 						func(t *testing.T, params v1alpha1.OpAMPBridge) {
 							d := appsv1.Deployment{}
 							exists, err := populateObjectIfExists(t, &d, namespacedObjectName(naming.OpAMPBridge(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							// confirm that we don't remove annotations and labels even if we don't set them
 							assert.Contains(t, d.Spec.Template.Annotations, annotationName)
 							assert.Contains(t, d.Labels, labelName)
 							actual := v1.Service{}
 							exists, err = populateObjectIfExists(t, &actual, namespacedObjectName(naming.OpAMPBridgeService(params.Name), params.Namespace))
-							assert.NoError(t, err)
+							require.NoError(t, err)
 							assert.True(t, exists)
 							assert.Contains(t, actual.Spec.Ports, extraPorts.ServicePort)
 						},
@@ -1106,7 +1106,7 @@ func TestOpAMPBridgeReconciler_Reconcile(t *testing.T) {
 				Recorder: record.NewFakeRecorder(20),
 				Config:   cfg,
 			})
-			assert.True(t, len(tt.want) > 0, "must have at least one group of checks to run")
+			assert.NotEmptyf(t, tt.want, "must have at least one group of checks to run")
 			firstCheck := tt.want[0]
 			createErr := k8sClient.Create(testContext, &tt.args.params.OpAMPBridge)
 			if !firstCheck.validateErr(t, createErr) {
@@ -1129,12 +1129,12 @@ func TestOpAMPBridgeReconciler_Reconcile(t *testing.T) {
 				existing := v1alpha1.OpAMPBridge{}
 				found, err := populateObjectIfExists(t, &existing, nsn)
 				assert.True(t, found)
-				assert.NoError(t, err)
+				require.NoError(t, err)
 
 				updateParam.OpAMPBridge.SetResourceVersion(existing.ResourceVersion)
 				updateParam.OpAMPBridge.SetUID(existing.UID)
 				err = k8sClient.Update(testContext, &updateParam.OpAMPBridge)
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				if err != nil {
 					continue
 				}
@@ -1178,7 +1178,7 @@ func TestSkipWhenInstanceDoesNotExist(t *testing.T) {
 	_, err := reconciler.Reconcile(context.Background(), req)
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestRegisterWithManager(t *testing.T) {
@@ -1194,7 +1194,7 @@ func TestRegisterWithManager(t *testing.T) {
 	err = reconciler.SetupWithManager(mgr)
 
 	// verify
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestOpenTelemetryCollectorReconciler_Finalizer(t *testing.T) {
@@ -1276,7 +1276,7 @@ service:
 	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 		actual := &v1beta1.OpenTelemetryCollector{}
 		err := reconciler.Get(context.Background(), nsn, actual)
-		assert.NoError(collect, err)
+		require.NoError(collect, err)
 		assert.NotNil(collect, actual.GetDeletionTimestamp())
 	}, time.Second*30, time.Millisecond*100)
 
@@ -1354,7 +1354,7 @@ func TestUpgrade(t *testing.T) {
 			expected: func(t *testing.T, otelcol v1beta1.OpenTelemetryCollector) {
 				assert.Equal(t, upgrade.Latest.String(), otelcol.Status.Version)
 				// The '-component.UseLocalHostAsDefaultHost' feature gate was removed in the 0.110.0 upgrade step
-				assert.Equal(t, "", otelcol.Spec.OpenTelemetryCommonFields.Args["feature-gates"])
+				assert.Empty(t, otelcol.Spec.OpenTelemetryCommonFields.Args["feature-gates"])
 			},
 		},
 		{
@@ -1440,16 +1440,16 @@ func TestUpgrade(t *testing.T) {
 			require.EventuallyWithT(t, func(collect *assert.CollectT) {
 				freshOtelcol := &v1beta1.OpenTelemetryCollector{}
 				getErr := k8sClient.Get(testCtx, nsn, freshOtelcol)
-				assert.NoError(collect, getErr)
+				require.NoError(collect, getErr)
 				freshOtelcol.Status = tt.input.Status
 				updateErr := k8sClient.Status().Update(testCtx, freshOtelcol)
-				assert.NoError(collect, updateErr)
+				require.NoError(collect, updateErr)
 			}, time.Second*10, time.Millisecond*10)
 
 			require.EventuallyWithT(t, func(collect *assert.CollectT) {
 				freshOtelcol := &v1beta1.OpenTelemetryCollector{}
 				getErr := k8sClient.Get(testCtx, nsn, freshOtelcol)
-				assert.NoError(collect, getErr)
+				require.NoError(collect, getErr)
 				assert.Equal(collect, tt.input.Status, freshOtelcol.Status)
 			}, time.Second*10, time.Millisecond*10)
 
@@ -1545,7 +1545,7 @@ func createTestReconcilerWithVersion(t *testing.T, ctx context.Context, cfg conf
 	require.NoError(t, err)
 	go func() {
 		startErr := runtimeCluster.Start(ctx)
-		assert.NoError(t, startErr)
+		require.NoError(t, startErr)
 	}()
 
 	cacheClient := runtimeCluster.GetClient()
@@ -1560,7 +1560,7 @@ func createTestReconcilerWithVersion(t *testing.T, ctx context.Context, cfg conf
 	err = reconciler.SetupCaches(runtimeCluster)
 	require.NoError(t, err)
 	synced := runtimeCluster.GetCache().WaitForCacheSync(ctx)
-	require.True(t, synced, "caches didn't sync successfully")
+	require.Truef(t, synced, "caches didn't sync successfully")
 	return reconciler
 }
 

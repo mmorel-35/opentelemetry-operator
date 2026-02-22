@@ -840,8 +840,8 @@ https:
 		require.NoError(t, err)
 
 		// Assert CLI values override config file
-		assert.True(t, config.PrometheusCR.Enabled, "CLI should override config file for prometheus CR enabled")
-		assert.True(t, config.HTTPS.Enabled, "CLI should override config file for HTTPS enabled")
+		assert.Truef(t, config.PrometheusCR.Enabled, "CLI should override config file for prometheus CR enabled")
+		assert.Truef(t, config.HTTPS.Enabled, "CLI should override config file for HTTPS enabled")
 	})
 
 	t.Run("command-line has priority over config file for string values", func(t *testing.T) {
@@ -885,12 +885,12 @@ kube_config_file_path: "/config/kube.config"
 		require.NoError(t, err)
 
 		// Assert CLI values override config file
-		assert.Equal(t, cliListenAddr, config.ListenAddr, "CLI should override config file for listen address")
-		assert.Equal(t, cliHttpsListenAddr, config.HTTPS.ListenAddr, "CLI should override config file for HTTPS listen address")
-		assert.Equal(t, cliCAPath, config.HTTPS.CAFilePath, "CLI should override config file for CA file path")
-		assert.Equal(t, cliCertPath, config.HTTPS.TLSCertFilePath, "CLI should override config file for TLS cert file path")
-		assert.Equal(t, cliKeyPath, config.HTTPS.TLSKeyFilePath, "CLI should override config file for TLS key file path")
-		assert.Equal(t, kubeConfigPath, config.KubeConfigFilePath, "CLI should override config file for kube config path")
+		assert.Equalf(t, cliListenAddr, config.ListenAddr, "CLI should override config file for listen address")
+		assert.Equalf(t, cliHttpsListenAddr, config.HTTPS.ListenAddr, "CLI should override config file for HTTPS listen address")
+		assert.Equalf(t, cliCAPath, config.HTTPS.CAFilePath, "CLI should override config file for CA file path")
+		assert.Equalf(t, cliCertPath, config.HTTPS.TLSCertFilePath, "CLI should override config file for TLS cert file path")
+		assert.Equalf(t, cliKeyPath, config.HTTPS.TLSKeyFilePath, "CLI should override config file for TLS key file path")
+		assert.Equalf(t, kubeConfigPath, config.KubeConfigFilePath, "CLI should override config file for kube config path")
 	})
 
 	t.Run("config file overrides defaults when CLI not specified", func(t *testing.T) {
@@ -923,12 +923,12 @@ kube_config_file_path: "` + kubeConfigPath + `"
 		require.NoError(t, err)
 
 		// Assert config file values override defaults
-		assert.Equal(t, configListenAddr, config.ListenAddr, "Config file should override defaults for listen address")
-		assert.True(t, config.PrometheusCR.Enabled, "Config file should override defaults for prometheus CR enabled")
-		assert.True(t, config.HTTPS.Enabled, "Config file should override defaults for HTTPS enabled")
-		assert.Equal(t, ":7443", config.HTTPS.ListenAddr, "Config file should override defaults for HTTPS listen address")
-		assert.Equal(t, kubeConfigPath, config.KubeConfigFilePath, "Config file should set kube config path")
-		assert.Equal(t, "config-file-namespace", config.CollectorNamespace, "Config file should set collector namespace")
+		assert.Equalf(t, configListenAddr, config.ListenAddr, "Config file should override defaults for listen address")
+		assert.Truef(t, config.PrometheusCR.Enabled, "Config file should override defaults for prometheus CR enabled")
+		assert.Truef(t, config.HTTPS.Enabled, "Config file should override defaults for HTTPS enabled")
+		assert.Equalf(t, ":7443", config.HTTPS.ListenAddr, "Config file should override defaults for HTTPS listen address")
+		assert.Equalf(t, kubeConfigPath, config.KubeConfigFilePath, "Config file should set kube config path")
+		assert.Equalf(t, "config-file-namespace", config.CollectorNamespace, "Config file should set collector namespace")
 	})
 
 	t.Run("environment variables are applied", func(t *testing.T) {
@@ -955,7 +955,7 @@ kube_config_file_path: "` + kubeConfigPath + `"
 		require.NoError(t, err)
 
 		// Assert environment variable is applied
-		assert.Equal(t, testNamespace, config.CollectorNamespace, "Environment variable should be applied")
+		assert.Equalf(t, testNamespace, config.CollectorNamespace, "Environment variable should be applied")
 	})
 
 	t.Run("loading priority order: defaults <- config file <- env vars <- CLI", func(t *testing.T) {
@@ -992,8 +992,8 @@ kube_config_file_path: "` + kubeConfigPath + `"
 		require.NoError(t, err)
 
 		// Assert correct priority: CLI over env vars over config file over defaults
-		assert.Equal(t, testNamespace, config.CollectorNamespace, "Env var should override config file for namespace")
-		assert.Equal(t, cliListenAddr, config.ListenAddr, "CLI should override config file for listen address")
-		assert.True(t, config.PrometheusCR.Enabled, "CLI should override config file for prometheus CR enabled")
+		assert.Equalf(t, testNamespace, config.CollectorNamespace, "Env var should override config file for namespace")
+		assert.Equalf(t, cliListenAddr, config.ListenAddr, "CLI should override config file for listen address")
+		assert.Truef(t, config.PrometheusCR.Enabled, "CLI should override config file for prometheus CR enabled")
 	})
 }

@@ -50,6 +50,6 @@ func Test0_110_0Upgrade(t *testing.T) {
 	if err != nil {
 		t.Errorf("expect err: nil but got: %v", err)
 	}
-	assert.EqualValues(t,
+	assert.Equal(t,
 		map[string]string{"foo": "bar", "feature-gates": "+baz"}, col.Spec.Args)
 }

@@ -252,8 +252,8 @@ func TestDeploymentHostNetwork(t *testing.T) {
 	d1, err := Deployment(params1)
 	require.NoError(t, err)
 
-	assert.Equal(t, d1.Spec.Template.Spec.HostNetwork, false)
-	assert.Equal(t, d1.Spec.Template.Spec.DNSPolicy, v1.DNSClusterFirst)
+	assert.False(t, d1.Spec.Template.Spec.HostNetwork)
+	assert.Equal(t, v1.DNSClusterFirst, d1.Spec.Template.Spec.DNSPolicy)
 
 	// Test hostNetwork=true
 	otelcol2 := v1beta1.OpenTelemetryCollector{
@@ -277,8 +277,8 @@ func TestDeploymentHostNetwork(t *testing.T) {
 
 	d2, err := Deployment(params2)
 	require.NoError(t, err)
-	assert.Equal(t, d2.Spec.Template.Spec.HostNetwork, true)
-	assert.Equal(t, d2.Spec.Template.Spec.DNSPolicy, v1.DNSClusterFirstWithHostNet)
+	assert.True(t, d2.Spec.Template.Spec.HostNetwork)
+	assert.Equal(t, v1.DNSClusterFirstWithHostNet, d2.Spec.Template.Spec.DNSPolicy)
 }
 
 func TestDeploymentDNSPolicy(t *testing.T) {
@@ -297,7 +297,7 @@ func TestDeploymentDNSPolicy(t *testing.T) {
 
 	d1, err := Deployment(params1)
 	require.NoError(t, err)
-	assert.Equal(t, d1.Spec.Template.Spec.DNSPolicy, v1.DNSClusterFirst)
+	assert.Equal(t, v1.DNSClusterFirst, d1.Spec.Template.Spec.DNSPolicy)
 
 	dnsPolicy := v1.DNSDefault
 	otelcol2 := v1beta1.OpenTelemetryCollector{
@@ -319,7 +319,7 @@ func TestDeploymentDNSPolicy(t *testing.T) {
 
 	d2, err := Deployment(params2)
 	require.NoError(t, err)
-	assert.Equal(t, d2.Spec.Template.Spec.DNSPolicy, v1.DNSDefault)
+	assert.Equal(t, v1.DNSDefault, d2.Spec.Template.Spec.DNSPolicy)
 }
 
 func TestDeploymentFilterLabels(t *testing.T) {
@@ -382,7 +382,7 @@ func TestDeploymentFilterAnnotations(t *testing.T) {
 	d, err := Deployment(params)
 	require.NoError(t, err)
 
-	assert.Len(t, d.ObjectMeta.Annotations, 0)
+	assert.Empty(t, d.ObjectMeta.Annotations)
 	for k := range excludedAnnotations {
 		assert.NotContains(t, d.ObjectMeta.Annotations, k)
 	}
@@ -434,7 +434,7 @@ func TestDeploymentNodeSelector(t *testing.T) {
 
 	d2, err := Deployment(params2)
 	require.NoError(t, err)
-	assert.Equal(t, d2.Spec.Template.Spec.NodeSelector, map[string]string{"node-key": "node-value"})
+	assert.Equal(t, map[string]string{"node-key": "node-value"}, d2.Spec.Template.Spec.NodeSelector)
 }
 
 func TestDeploymentPriorityClassName(t *testing.T) {
@@ -766,7 +766,7 @@ func TestDeploymentDNSConfig(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "my-instance-collector", d.Name)
 	assert.Equal(t, v1.DNSPolicy("None"), d.Spec.Template.Spec.DNSPolicy)
-	assert.Equal(t, d.Spec.Template.Spec.DNSConfig.Nameservers, []string{"8.8.8.8"})
+	assert.Equal(t, []string{"8.8.8.8"}, d.Spec.Template.Spec.DNSConfig.Nameservers)
 }
 
 func TestGetDesiredReplicas(t *testing.T) {

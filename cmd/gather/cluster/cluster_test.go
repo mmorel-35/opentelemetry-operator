@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -102,7 +103,7 @@ func TestGetOperatorNamespace(t *testing.T) {
 	// Test when OperatorNamespace is already set
 	cfg.OperatorNamespace = "test-namespace"
 	ns, err := cluster.getOperatorNamespace()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "test-namespace", ns)
 
 	// Test when OperatorNamespace is not set
@@ -119,7 +120,7 @@ func TestGetOperatorNamespace(t *testing.T) {
 	})
 
 	ns, err = cluster.getOperatorNamespace()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "operator-namespace", ns)
 	mockClient.AssertExpectations(t)
 }
@@ -144,7 +145,7 @@ func TestGetOperatorDeployment(t *testing.T) {
 	})
 
 	deployment, err := cluster.getOperatorDeployment()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "opentelemetry-operator", deployment.Name)
 
 	mockClient.AssertExpectations(t)
@@ -165,6 +166,6 @@ func TestGetOperatorDeploymentNotFound(t *testing.T) {
 	})
 
 	_, err := cluster.getOperatorDeployment()
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Equal(t, "operator not found", err.Error())
 }

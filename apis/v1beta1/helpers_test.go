@@ -77,8 +77,8 @@ func TestParseAddressEndpoint(t *testing.T) {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, host, tt.expectedHost)
-				require.Equal(t, port, tt.expectedPort)
+				require.Equal(t, tt.expectedHost, host)
+				require.Equal(t, tt.expectedPort, port)
 			}
 		})
 	}
@@ -120,7 +120,7 @@ func TestAddPrefix(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := addPrefix(tt.prefix, tt.arr)
-			require.Equal(t, result, tt.expected)
+			require.Equal(t, tt.expected, result)
 		})
 	}
 }
@@ -188,11 +188,11 @@ func TestGetNullValue(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := getNullValuedKeys(tt.cfg)
-			require.Equal(t, len(result), len(tt.expected))
+			require.Len(t, tt.expected, len(result))
 
 			for _, expected := range tt.expected {
 				found := slices.Contains(result, expected)
-				require.True(t, found, "getNullValuedKeys() missing expected value: %s", expected)
+				require.Truef(t, found, "getNullValuedKeys() missing expected value: %s", expected)
 			}
 		})
 	}
@@ -261,7 +261,7 @@ func TestNormalizeConfig(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			normalizeConfig(tt.input)
-			require.Equal(t, tt.input, tt.expected)
+			require.Equal(t, tt.expected, tt.input)
 		})
 	}
 }

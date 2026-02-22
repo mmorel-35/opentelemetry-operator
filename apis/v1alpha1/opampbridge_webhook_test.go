@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -105,7 +106,7 @@ func TestOpAMPBridgeDefaultingWebhook(t *testing.T) {
 			}
 			ctx := context.Background()
 			err := webhook.Default(ctx, &test.opampBridge)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, test.expected, test.opampBridge)
 		})
 	}
@@ -293,7 +294,7 @@ func TestOpAMPBridgeValidatingWebhook(t *testing.T) {
 			ctx := context.Background()
 			warnings, err := webhook.ValidateCreate(ctx, &test.opampBridge)
 			if test.expectedErr == "" {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				return
 			}
 			if len(test.expectedWarnings) == 0 {
@@ -301,7 +302,7 @@ func TestOpAMPBridgeValidatingWebhook(t *testing.T) {
 			} else {
 				assert.ElementsMatch(t, warnings, test.expectedWarnings)
 			}
-			assert.ErrorContains(t, err, test.expectedErr)
+			require.ErrorContains(t, err, test.expectedErr)
 		})
 	}
 }

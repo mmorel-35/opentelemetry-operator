@@ -12,6 +12,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -184,7 +185,7 @@ func TestCreateOTELFolder(t *testing.T) {
 	outputDir, err := createOTELFolder(collectionDir, otelCol.ObjectMeta)
 
 	expectedDir := filepath.Join(collectionDir, "namespaces", otelCol.Namespace, otelCol.Name)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, expectedDir, outputDir)
 
 	// Clean up after the test
@@ -194,7 +195,7 @@ func TestCreateOTELFolder(t *testing.T) {
 func TestCreateFile(t *testing.T) {
 	outputDir := "/tmp/test-dir"
 	err := os.MkdirAll(outputDir, os.ModePerm)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer os.RemoveAll(outputDir)
 
 	mockObj := &MockObject{}
@@ -203,12 +204,12 @@ func TestCreateFile(t *testing.T) {
 	mockObj.On("DeepCopyObject").Return(mockObj)
 
 	file, err := createFile(outputDir, mockObj)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer file.Close()
 
 	expectedPath := filepath.Join(outputDir, "mockobject-test-deployment.yaml")
 	_, err = os.Stat(expectedPath)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func (m *MockObject) SetUID(uid types.UID) {

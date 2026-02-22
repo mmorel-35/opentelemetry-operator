@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
@@ -299,7 +300,7 @@ func TestInstrumentationDefaultingWebhook(t *testing.T) {
 			}
 
 			err := webhook.Default(context.Background(), test.input)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			test.verify(t, test.input)
 		})
@@ -600,13 +601,13 @@ func TestInstrumentationValidatingWebhook(t *testing.T) {
 			if test.err == "" {
 				warnings, err := InstrumentationWebhook{}.ValidateCreate(ctx, &test.inst)
 				assert.Equal(t, test.warnings, warnings)
-				assert.Nil(t, err)
+				require.NoError(t, err)
 				warnings, err = InstrumentationWebhook{}.ValidateUpdate(ctx, nil, &test.inst)
 				assert.Equal(t, test.warnings, warnings)
-				assert.Nil(t, err)
+				require.NoError(t, err)
 				warnings, err = InstrumentationWebhook{}.ValidateDelete(ctx, &test.inst)
 				assert.Equal(t, test.warnings, warnings)
-				assert.Nil(t, err)
+				require.NoError(t, err)
 			} else {
 				warnings, err := InstrumentationWebhook{}.ValidateCreate(ctx, &test.inst)
 				assert.Equal(t, test.warnings, warnings)
@@ -669,10 +670,10 @@ func TestInstrumentationValidatingWebhook_DeprecationWarnings(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			warnings, err := InstrumentationWebhook{}.ValidateCreate(context.Background(), &tt.inst)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			found := slices.Contains(warnings, tt.want)
-			assert.True(t, found, "expected warnings to contain %q, got %v", tt.want, warnings)
+			assert.Truef(t, found, "expected warnings to contain %q, got %v", tt.want, warnings)
 		})
 	}
 }
@@ -748,13 +749,13 @@ func TestInstrumentationJaegerRemote(t *testing.T) {
 				if test.err == "" {
 					warnings, err := InstrumentationWebhook{}.ValidateCreate(ctx, &inst)
 					assert.Nil(t, warnings)
-					assert.Nil(t, err)
+					require.NoError(t, err)
 					warnings, err = InstrumentationWebhook{}.ValidateUpdate(ctx, nil, &inst)
 					assert.Nil(t, warnings)
-					assert.Nil(t, err)
+					require.NoError(t, err)
 					warnings, err = InstrumentationWebhook{}.ValidateDelete(ctx, &inst)
 					assert.Nil(t, warnings)
-					assert.Nil(t, err)
+					require.NoError(t, err)
 				} else {
 					warnings, err := InstrumentationWebhook{}.ValidateCreate(ctx, &inst)
 					assert.Nil(t, warnings)

@@ -56,7 +56,7 @@ func Test_tov1beta1_config(t *testing.T) {
 		assert.Equal(t, cfgV1.Spec.Args, cfgV2.Spec.Args)
 
 		yamlCfg, err := go_yaml.Marshal(&cfgV2.Spec.Config)
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		assert.YAMLEq(t, collectorCfg, string(yamlCfg))
 	})
 	t.Run("invalid config", func(t *testing.T) {
@@ -72,9 +72,9 @@ func Test_tov1beta1_config(t *testing.T) {
 		assert.NotNil(t, cfgV2.Spec.Config.Receivers.Object)
 		assert.NotNil(t, cfgV2.Spec.Config.Exporters.Object)
 		assert.NotNil(t, cfgV2.Spec.Config.Service.Pipelines)
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Receivers.Object))
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Exporters.Object))
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Service.Pipelines))
+		assert.Empty(t, cfgV2.Spec.Config.Receivers.Object)
+		assert.Empty(t, cfgV2.Spec.Config.Exporters.Object)
+		assert.Empty(t, cfgV2.Spec.Config.Service.Pipelines)
 	})
 	t.Run("null config", func(t *testing.T) {
 		config := "null\n"
@@ -89,9 +89,9 @@ func Test_tov1beta1_config(t *testing.T) {
 		assert.NotNil(t, cfgV2.Spec.Config.Receivers.Object)
 		assert.NotNil(t, cfgV2.Spec.Config.Exporters.Object)
 		assert.NotNil(t, cfgV2.Spec.Config.Service.Pipelines)
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Receivers.Object))
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Exporters.Object))
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Service.Pipelines))
+		assert.Empty(t, cfgV2.Spec.Config.Receivers.Object)
+		assert.Empty(t, cfgV2.Spec.Config.Exporters.Object)
+		assert.Empty(t, cfgV2.Spec.Config.Service.Pipelines)
 	})
 	t.Run("empty config", func(t *testing.T) {
 		config := ""
@@ -106,9 +106,9 @@ func Test_tov1beta1_config(t *testing.T) {
 		assert.NotNil(t, cfgV2.Spec.Config.Receivers.Object)
 		assert.NotNil(t, cfgV2.Spec.Config.Exporters.Object)
 		assert.NotNil(t, cfgV2.Spec.Config.Service.Pipelines)
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Receivers.Object))
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Exporters.Object))
-		assert.Equal(t, 0, len(cfgV2.Spec.Config.Service.Pipelines))
+		assert.Empty(t, cfgV2.Spec.Config.Receivers.Object)
+		assert.Empty(t, cfgV2.Spec.Config.Exporters.Object)
+		assert.Empty(t, cfgV2.Spec.Config.Service.Pipelines)
 	})
 }
 
@@ -373,8 +373,8 @@ func Test_tov1beta1AndBack_prometheus_selectors(t *testing.T) {
 		// empty LabelSelector mean select everything
 		assert.NotNil(t, colbeta1.Spec.TargetAllocator.PrometheusCR.PodMonitorSelector)
 		assert.NotNil(t, colbeta1.Spec.TargetAllocator.PrometheusCR.ServiceMonitorSelector)
-		assert.Equal(t, 0, len(colalpha1.Spec.TargetAllocator.PrometheusCR.PodMonitorSelector))
-		assert.Equal(t, 0, len(colalpha1.Spec.TargetAllocator.PrometheusCR.ServiceMonitorSelector))
+		assert.Empty(t, colalpha1.Spec.TargetAllocator.PrometheusCR.PodMonitorSelector)
+		assert.Empty(t, colalpha1.Spec.TargetAllocator.PrometheusCR.ServiceMonitorSelector)
 
 		err = colalpha1.ConvertFrom(&colbeta1)
 		require.NoError(t, err)
