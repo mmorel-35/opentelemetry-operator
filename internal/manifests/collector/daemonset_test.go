@@ -701,7 +701,6 @@ func TestDaemonSetTerminationGracePeriodSeconds(t *testing.T) {
 }
 
 func TestDaemonSetHostPIDCanBeSet(t *testing.T) {
-
 	// Test the case where hostPID is not set, should default to false
 	otelcol1 := v1beta1.OpenTelemetryCollector{
 		ObjectMeta: metav1.ObjectMeta{

@@ -25,7 +25,6 @@ var wantInstrumentationScope = instrumentation.Scope{
 }
 
 func TestOTELCollectorCRDMetrics(t *testing.T) {
-
 	otelcollector1 := &OpenTelemetryCollector{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "collector1",
@@ -105,7 +104,7 @@ func TestOTELCollectorCRDMetrics(t *testing.T) {
 		},
 	}
 
-	var tests = []struct {
+	tests := []struct {
 		name         string
 		testFunction func(t *testing.T, m *Metrics, collectors []*OpenTelemetryCollector, reader metric.Reader)
 	}{
@@ -527,7 +526,6 @@ func checkCreate(t *testing.T, m *Metrics, collectors []*OpenTelemetryCollector,
 }
 
 func checkUpdate(t *testing.T, m *Metrics, collectors []*OpenTelemetryCollector, reader metric.Reader) {
-
 	m.update(context.Background(), collectors[0], collectors[2])
 
 	rm := metricdata.ResourceMetrics{}

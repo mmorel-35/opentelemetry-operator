@@ -242,7 +242,6 @@ func (r *ClusterObservabilityReconciler) reconcileOpenTelemetryResource(ctx cont
 
 				return r.Update(ctx, latest)
 			})
-
 			if err != nil {
 				return fmt.Errorf("failed to update OpenTelemetryCollector %s: %w", key, err)
 			}
@@ -272,7 +271,6 @@ func (r *ClusterObservabilityReconciler) reconcileOpenTelemetryResource(ctx cont
 
 				return r.Update(ctx, latest)
 			})
-
 			if err != nil {
 				return fmt.Errorf("failed to update Instrumentation %s: %w", key, err)
 			}
@@ -507,7 +505,6 @@ func (r *ClusterObservabilityReconciler) cleanupManagedResources(ctx context.Con
 
 // cleanupClusterScopedResources removes cluster-scoped resources that can't use owner references.
 func (r *ClusterObservabilityReconciler) cleanupClusterScopedResources(ctx context.Context, log logr.Logger, instance *v1alpha1.ClusterObservability) error {
-
 	if r.config.OpenShiftRoutesAvailability == openshift.RoutesAvailable {
 		agentCollectorName := fmt.Sprintf("%s-%s", instance.Name, clusterobservability.AgentCollectorSuffix)
 		sccName := fmt.Sprintf("%s-hostaccess", agentCollectorName)

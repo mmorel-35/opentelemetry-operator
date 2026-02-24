@@ -66,7 +66,7 @@ func NewPrometheusCRWatcher(
 	// we want to use endpointslices by default
 	serviceDiscoveryRole := monitoringv1.ServiceDiscoveryRole("EndpointSlice")
 
-	//no need to hardcode durations, use default if not set
+	// no need to hardcode durations, use default if not set
 	prom := &monitoringv1.Prometheus{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: cfg.CollectorNamespace,
@@ -91,7 +91,6 @@ func NewPrometheusCRWatcher(
 	}
 
 	generator, err := prometheus.NewConfigGenerator(promLogger, prom, prometheus.WithEndpointSliceSupport(), prometheus.WithInlineTLSConfig())
-
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +186,6 @@ func getNamespaceInformer(ctx context.Context, allowList, denyList map[string]st
 		operatorMetrics.NewInstrumentedListerWatcher(lw),
 		&v1.Namespace{}, resyncPeriod, cache.Indexers{},
 	), nil
-
 }
 
 // checkCRDAvailability checks if a specific CRD is available in the cluster.

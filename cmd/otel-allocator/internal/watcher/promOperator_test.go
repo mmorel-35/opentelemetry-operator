@@ -1529,7 +1529,8 @@ func getTestPrometheusCRWatcher(
 		Name: "labellednamespace",
 		Labels: map[string]string{
 			"label1": "label1",
-		}}})
+		},
+	}})
 
 	// create the shared informer and resync every 1s
 	nsMonInf := cache.NewSharedInformer(source, &v1.Namespace{}, 1*time.Second).(cache.SharedIndexInformer)
@@ -1553,7 +1554,6 @@ func getTestPrometheusCRWatcher(
 		store:                           store,
 		prometheusCR:                    prom,
 	}, source
-
 }
 
 // Remove relable configs fields from scrape configs for testing,

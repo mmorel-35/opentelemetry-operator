@@ -89,6 +89,7 @@ formatters:
   enable:
     - gci
     - gofmt
+    - gofumpt
   settings:
     gci:
       sections:
@@ -97,5 +98,8 @@ formatters:
         - prefix(github.com/open-telemetry/opentelemetry-operator)
     gofmt:
       simplify: true
+    gofumpt:
+      module-path: github.com/open-telemetry/opentelemetry-operator
+      extra-rules: true
   exclusions:
     generated: lax

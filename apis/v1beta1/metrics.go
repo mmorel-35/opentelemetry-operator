@@ -131,13 +131,12 @@ func (m *Metrics) delete(ctx context.Context, collector *OpenTelemetryCollector)
 	m.updateGeneralCRMetricsComponents(ctx, collector, false)
 }
 
-func (m *Metrics) update(ctx context.Context, oldCollector *OpenTelemetryCollector, newCollector *OpenTelemetryCollector) {
+func (m *Metrics) update(ctx context.Context, oldCollector, newCollector *OpenTelemetryCollector) {
 	m.delete(ctx, oldCollector)
 	m.create(ctx, newCollector)
 }
 
 func (m *Metrics) updateGeneralCRMetricsComponents(ctx context.Context, collector *OpenTelemetryCollector, up bool) {
-
 	inc := 1
 	if !up {
 		inc = -1
@@ -148,6 +147,7 @@ func (m *Metrics) updateGeneralCRMetricsComponents(ctx context.Context, collecto
 		attribute.Key("type").String(string(collector.Spec.Mode)),
 	))
 }
+
 func (m *Metrics) updateComponentCounters(ctx context.Context, collector *OpenTelemetryCollector, up bool) {
 	components := getComponentsFromConfig(collector.Spec.Config)
 	moveCounter(ctx, collector, components.receivers, m.receiversCounter, up)
@@ -155,7 +155,6 @@ func (m *Metrics) updateComponentCounters(ctx context.Context, collector *OpenTe
 	moveCounter(ctx, collector, components.processors, m.processorCounter, up)
 	moveCounter(ctx, collector, components.extensions, m.extensionsCounter, up)
 	moveCounter(ctx, collector, components.connectors, m.connectorsCounter, up)
-
 }
 
 func extractElements(elements map[string]any) []string {
@@ -178,7 +177,6 @@ func extractElements(elements map[string]any) []string {
 }
 
 func getComponentsFromConfig(yamlContent Config) *componentDefinitions {
-
 	info := &componentDefinitions{
 		receivers: extractElements(yamlContent.Receivers.Object),
 		exporters: extractElements(yamlContent.Exporters.Object),
@@ -200,7 +198,8 @@ func getComponentsFromConfig(yamlContent Config) *componentDefinitions {
 }
 
 func moveCounter(
-	ctx context.Context, collector *OpenTelemetryCollector, types []string, upDown metric.Int64UpDownCounter, up bool) {
+	ctx context.Context, collector *OpenTelemetryCollector, types []string, upDown metric.Int64UpDownCounter, up bool,
+) {
 	for _, exporter := range types {
 		inc := 1
 		if !up {

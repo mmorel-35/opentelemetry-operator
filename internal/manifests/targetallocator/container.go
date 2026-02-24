@@ -48,7 +48,7 @@ func Container(cfg config.Config, logger logr.Logger, instance v1alpha1.TargetAl
 	}}
 	volumeMounts = append(volumeMounts, instance.Spec.VolumeMounts...)
 
-	var envVars = instance.Spec.Env
+	envVars := instance.Spec.Env
 	if envVars == nil {
 		envVars = []corev1.EnvVar{}
 	}

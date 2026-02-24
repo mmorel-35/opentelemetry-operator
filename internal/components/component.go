@@ -68,7 +68,6 @@ func PortFromEndpoint(endpoint string) (int32, error) {
 		portStr := r.FindString(endpoint)
 		cleanedPortStr := strings.ReplaceAll(portStr, ":", "")
 		port, err = strconv.ParseInt(cleanedPortStr, 10, 32)
-
 		if err != nil {
 			return UnsetPort, err
 		}

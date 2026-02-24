@@ -11,8 +11,10 @@ import (
 )
 
 // Deprecated use upgradeFuncV1beta1.
-type upgradeFunc func(u VersionUpgrade, otelcol *v1alpha1.OpenTelemetryCollector) (*v1alpha1.OpenTelemetryCollector, error)
-type upgradeFuncV1beta1 func(u VersionUpgrade, otelcol *v1beta1.OpenTelemetryCollector) (*v1beta1.OpenTelemetryCollector, error)
+type (
+	upgradeFunc        func(u VersionUpgrade, otelcol *v1alpha1.OpenTelemetryCollector) (*v1alpha1.OpenTelemetryCollector, error)
+	upgradeFuncV1beta1 func(u VersionUpgrade, otelcol *v1beta1.OpenTelemetryCollector) (*v1beta1.OpenTelemetryCollector, error)
+)
 
 type otelcolVersion struct {
 	// deprecated use upgradeV1beta1.

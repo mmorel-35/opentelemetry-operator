@@ -46,9 +46,7 @@ const (
 	DefaultCollectorNotReadyGracePeriod                = 30 * time.Second
 )
 
-var (
-	DefaultKubeConfigFilePath string = filepath.Join(homedir.HomeDir(), ".kube", "config")
-)
+var DefaultKubeConfigFilePath string = filepath.Join(homedir.HomeDir(), ".kube", "config")
 
 var defaultScrapeProtocolsCR = []monitoringv1.ScrapeProtocol{
 	monitoringv1.OpenMetricsText1_0_0,

@@ -342,7 +342,6 @@ func ValidatePromConfig(config map[any]any, targetAllocatorEnabled bool) error {
 //   - at least one scrape config has to be defined in Prometheus receiver configuration
 //   - PrometheusCR has to be enabled in target allocator settings
 func ValidateTargetAllocatorConfig(targetAllocatorPrometheusCR bool, promReceiverConfig map[any]any) error {
-
 	if targetAllocatorPrometheusCR {
 		return nil
 	}
